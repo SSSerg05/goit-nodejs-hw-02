@@ -1,5 +1,6 @@
 import express from 'express';
-import db from "../../models/contacts.json";
+import Joi from 'joi';
+
 import contacts from '../../models/contacts.js';
 
 const HttpError = (status, message) => { 
@@ -8,6 +9,12 @@ const HttpError = (status, message) => {
   return error;
 }
 
+
+const addSchema = Joi.object({
+  name: Joi.string().required,
+  email: Joi.string().required, 
+  phone: Joi.string().required,
+})
 
 const router = express.Router()
 
@@ -25,8 +32,6 @@ router.get('/', async (req, res, next) => {
       next(error);
       //res.status(500).json({message: "Server not found"})
   }
-
-
 })
 
 // пошук по id
@@ -43,21 +48,25 @@ router.get('/:contactId', async (req, res, next) => {
 
   } catch (error) {
     next(error);
-    // res.status(404).json({ message: 'Not found' })
   }
-  
 })
 
 // додавання запису
 router.post('/', async (req, res, next) => {
   try {
-    const result = await contacts.addContact(req.body);
+   
     // потрібна перевірка req.body
+    const { error } = addSchema.validate(req.body);
+    if (error) { 
+      throw HttpError(400, error.message);
+    }
+
+    const result = await contacts.addContact(req.body);
     res.status(201).json(result);
+
   } catch (error) {
-    
+    next(error);
   }
-  res.json({ message: 'template message' })
 })
 
 // видалення запису
