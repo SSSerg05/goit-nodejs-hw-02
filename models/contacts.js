@@ -1,23 +1,3 @@
-// const fs = require('fs/promises')
-
-// const listContacts = async () => {}
-
-// const getContactById = async (contactId) => {}
-
-// const removeContact = async (contactId) => {}
-
-// const addContact = async (body) => {}
-
-// const updateContact = async (contactId, body) => {}
-
-// export default {
-//   listContacts,
-//   getContactById,
-//   removeContact,
-//   addContact,
-//   updateContact,
-// }
-
 import { promises as fs } from 'fs';
 import path from 'path';
 import { nanoid } from 'nanoid';
@@ -119,8 +99,17 @@ export const addContact = async ({ name, email, phone }) => {
 // 
 // @return {...} || null - object || null
 const updateContact = async (contactId, body) => { 
+  const data = await readData(contactsPath);
+  const index = data.findIndex(item => item.id === id);
   
-  return null;
+  if (index === -1) { 
+    return null
+  }
+
+  data[index] = { id, ...body };
+  await updateData(data);
+ 
+  return data[index];
 }
 
 
