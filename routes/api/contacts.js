@@ -9,7 +9,7 @@ const HttpError = (status, message) => {
   return error;
 }
 
-
+// схема для валідації
 const addSchema = Joi.object({
   name: Joi.string().required,
   email: Joi.string().required, 
@@ -17,6 +17,7 @@ const addSchema = Joi.object({
 })
 
 const router = express.Router()
+
 
 // список всіх контактів
 router.get('/', async (req, res, next) => {
@@ -34,6 +35,7 @@ router.get('/', async (req, res, next) => {
   }
 })
 
+
 // пошук по id
 router.get('/:contactId', async (req, res, next) => {
   try {
@@ -50,6 +52,7 @@ router.get('/:contactId', async (req, res, next) => {
     next(error);
   }
 })
+
 
 // додавання запису
 router.post('/', async (req, res, next) => {
@@ -74,14 +77,45 @@ router.post('/', async (req, res, next) => {
   }
 })
 
+
 // видалення запису
 router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
+  try {
+    const { id } = req.params;
+    const result = await contacts.removeContact(id);
+    
+    if (!result) {
+      throw HttpError(404, `Not found id:${id}`);
+    }
+    
+    res.status(201).json(result);
+  } catch (error) {
+      next(error);
+  }
+
 })
 
-// 
+
+// оновлення запису
 router.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
+  try {
+    const { error } = addSchema.validate(req.body);
+    if (error) { 
+      throw HttpError(400, "Missing fields " + error.message);
+    }
+
+    const { id } = req.params;
+    const result = await contacts.updateContact(id, data);
+
+    if (!result) {
+      throw HttpError(404, `Not found contact with id:${id}`);
+    }
+
+    res.json(result);
+
+  } catch (error) {
+    next(error);
+  }
 })
 
 export default router
