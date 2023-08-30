@@ -1,13 +1,18 @@
 {
-  "name": "template",
+  "name": "goit-nodejs-hw-02-06",
   "version": "0.0.0",
   "private": true,
+  "main": "index.js",
+  "type": "module",
+  "homepage": "https://SSSerg05.github.io/goit-nodejs-hw-02-06/",
   "scripts": {
     "start": "cross-env NODE_ENV=production node ./server.js",
     "start:dev": "cross-env NODE_ENV=development nodemon ./server.js",
     "lint": "eslint **/*.js",
     "lint:fix": "eslint --fix **/*.js"
   },
+  "author": "SSerg",
+  "license": "ISC",
   "dependencies": {
     "cors": "2.8.5",
     "cross-env": "7.0.3",
