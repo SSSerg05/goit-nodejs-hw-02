@@ -2,7 +2,7 @@
   "name": "goit-nodejs-hw-02-06",
   "version": "0.0.0",
   "private": true,
-  "main": "index.js",
+  "main": "app.js",
   "type": "module",
   "homepage": "https://SSSerg05.github.io/goit-nodejs-hw-02-06/",
   "scripts": {
