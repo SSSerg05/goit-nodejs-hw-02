@@ -62,6 +62,11 @@ router.post('/', async (req, res, next) => {
     }
 
     const result = await contacts.addContact(req.body);
+    
+    if (!result) {
+      throw HttpError(404, "Cannot add Contact");
+    }
+    
     res.status(201).json(result);
 
   } catch (error) {
