@@ -46,11 +46,10 @@ export const listContacts = async () => {
 // @param {object} {id}
 // 
 // @return {...} || null - object || null
-export const getContactById = async ({ id }) => {
-
+export const getContactById = async (id) => {
+  
   const data = await readData(contactsPath);
   const result = data.find(item => item.id === id)
-
   return result || null;
 }
 
@@ -60,9 +59,9 @@ export const getContactById = async ({ id }) => {
 // @param {object} {id}
 // 
 // @return {...} || null - object || null
-export const removeContact = async({ id }) => {
+export const removeContact = async(id) => {
 
-  const removeField = await getContactById({ id });
+  const removeField = await getContactById(id);
 
   if (!removeField) { 
     return null
@@ -98,7 +97,7 @@ export const addContact = async ({ name, email, phone }) => {
 // @param {object} {body}
 // 
 // @return {...} || null - object || null
-const updateContact = async (contactId, body) => { 
+const updateContact = async (id, body) => { 
   const data = await readData(contactsPath);
   const index = data.findIndex(item => item.id === id);
   
