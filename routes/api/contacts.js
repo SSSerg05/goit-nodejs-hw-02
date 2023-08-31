@@ -22,6 +22,7 @@ const router = express.Router()
 // список всіх контактів
 router.get('/', async (req, res, next) => {
   try {
+    console.log(req, res);
     const result = await contacts.listContacts();
     
     if (!result) {
@@ -39,6 +40,7 @@ router.get('/', async (req, res, next) => {
 // пошук по id
 router.get('/:contactId', async (req, res, next) => {
   try {
+    console.log(req, res);
     const { id } = req.params;
     const result = await getContactById(id);
     

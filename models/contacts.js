@@ -2,7 +2,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { nanoid } from 'nanoid';
 
-const contactsPath = path.resolve('db', 'contacts.json');
+const contactsPath = path.resolve('./models', 'contacts.json');
 
 // Read File DataBase
 //=======================
