@@ -14,18 +14,20 @@ const addSchema = Joi.object({
 })
 
 // список всіх контактів
-const listContacts = async (req, res, next) => {
+const listContacts = async (req, res) => {
+
   const result = await contacts.listContacts();
-  
   if (!result) {
     throw HttpError(500, "Server not found");
   }
+  
   res.json(result);
 }
 
 
 // пошук по id
-const getContactById = async (req, res, next) => {
+const getContactById = async (req, res) => {
+
   const { id } = req.params;
   const result = await contacts.getContactById(id);
   if (!result) {
@@ -37,13 +39,14 @@ const getContactById = async (req, res, next) => {
 
 
 // додавання запису
-const addContact = async (req, res, next) => {
+const addContact = async (req, res) => {
+
   const { error } = addSchema.validate(req.body);
   if (error) {
     throw HttpError(400, "Не має даних для додавання. " + error.message);
   }
+
   const result = await contacts.addContact(req.body);
-  
   if (!result) {
     throw HttpError(404, "Cannot add Contact");
   }
@@ -53,7 +56,8 @@ const addContact = async (req, res, next) => {
 
 
 // видалення запису
-const removeContact = async (req, res, next) => {
+const removeContact = async (req, res) => {
+
   const { id } = req.params;
   const result = await contacts.removeContact(id);
   
@@ -66,16 +70,19 @@ const removeContact = async (req, res, next) => {
 
 
 // оновлення запису
-const updateContact = async (req, res, next) => {
+const updateContact = async (req, res) => {
+
   const { error } = addSchema.validate(req.body);
   if (error) { 
     throw HttpError(400, "Missing fields " + error.message);
   }
+
   const { id } = req.params;
   const result = await contacts.updateContact(id, req.body);
   if (!result) {
     throw HttpError(404, `Not found contact with id:${id}`);
   }
+
   res.json(result);
 }
 
