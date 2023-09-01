@@ -20,7 +20,7 @@ const listContacts = async (req, res) => {
   if (!result) {
     throw HttpError(500, "Server not found");
   }
-  
+
   res.json(result);
 }
 
