@@ -3,7 +3,7 @@ import Joi from 'joi';
 
 import contacts from '../models/contacts.js';
 import HttpError from '../helpers/HttpError.js';
-import ctrlWrapper from '../decrator/ctrlWrapper.js';
+import ctrlWrapper from '../decrators/ctrlWrapper.js';
 
 
 // схема для валідації
