@@ -2,13 +2,8 @@ import express from 'express';
 import Joi from 'joi';
 
 import contacts from '../../models/contacts.js';
+import HttpError from '../../helpers/HttpError.js';
 
-const HttpError = (status, message) => { 
-  console.log('Error: ',status, message);
-  const error = new Error(message);
-  error.status = status;
-  return error;
-}
 
 // схема для валідації
 const addSchema = Joi.object({
@@ -89,7 +84,7 @@ router.delete('/:id', async (req, res, next) => {
       throw HttpError(404, `Not found id:${id}`);
     }
     
-    res.status(204).json(result);
+    res.status(200).json({ ...result, message: "Contact deleted" });
   } catch (error) {
       next(error);
   }
