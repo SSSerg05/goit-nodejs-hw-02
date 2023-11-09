@@ -77,7 +77,7 @@ export const removeContact = async(id) => {
 
 // Add Contact in DataBase file
 //=======================
-// @param {object} {name, email, phone}
+// @param {object} body -> {name, email, phone}
 // 
 // @return {...} || null - object || null
 export const addContact = async ({ name, email, phone }) => {
