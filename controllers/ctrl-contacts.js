@@ -43,7 +43,7 @@ const addContact = async (req, res) => {
 
   const { error } = addSchema.validate(req.body);
   if (error) {
-    throw HttpError(400, "Не має даних для додавання. " + error.message);
+    throw HttpError(400, "missing required name field. " + error.message);
   }
 
   const result = await contacts.addContact(req.body);
