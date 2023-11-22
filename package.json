@@ -4,6 +4,9 @@
   "private": true,
   "main": "app.js",
   "type": "module",
+  "engines": {
+    "node": ">=16.20.1"
+  },
   "homepage": "https://SSSerg05.github.io/goit-nodejs-hw-02-06/",
   "scripts": {
     "start": "cross-env NODE_ENV=production node ./server.js",
