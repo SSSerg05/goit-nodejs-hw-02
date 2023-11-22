@@ -1,8 +1,10 @@
-import express, { json } from 'express'
-import logger from 'morgan'
-import cors from 'cors'
+import express, { json } from 'express';
+import logger from 'morgan';
+import cors from 'cors';
+import "dotenv/config";
 
-import contactsRouter from './routes/api/contacts-route.js'
+
+import contactsRouter from './routes/api/contacts-route.js';
 
 const app = express();
 
