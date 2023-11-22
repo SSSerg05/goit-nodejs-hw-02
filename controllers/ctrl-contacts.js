@@ -43,17 +43,17 @@ const getContactById = async (req, res) => {
 // // додавання запису
 const addContact = async (req, res) => {
 
-//   const { error } = addSchema.validate(req.body);
-//   if (error) {
-//     throw HttpError(400, "missing required name field. " + error.message);
-//   }
+  const { error } = addSchema.validate(req.body);
+  if (error) {
+    throw HttpError(400, "missing required name field. " + error.message);
+  }
 
-//   const result = await contacts.addContact(req.body);
-//   if (!result) {
-//     throw HttpError(404, "Cannot add Contact");
-//   }
+  const result = await Contact.create(req.body);
+  if (!result) {
+    throw HttpError(404, "Cannot add Contact");
+  }
   
-//   res.status(201).json(result);
+  res.status(201).json(result);
 }
 
 
