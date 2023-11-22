@@ -1,7 +1,7 @@
 import app from './app.js'
 import mongoose from 'mongoose'
 
-const DB_HOST = "mongodb+srv://SSerg:lUXIBymHzzGQJUWG@cluster0.w5v2ol5.mongodb.net/db-contacts?retryWrites=true&w=majority"
+const {DB_HOST} = process.env
 
 mongoose.connect(DB_HOST)
   .then( () => {
