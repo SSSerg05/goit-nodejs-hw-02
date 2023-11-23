@@ -3,7 +3,7 @@ import express from 'express';
 import ctrl from "../../controllers/ctrl-contacts.js";
 
 import {validateBody} from '../../decorators/validateBody.js'; 
-import { isValidId } from '../../middlewares/index.js';
+import { isValidId, isEmptyBody } from '../../middlewares/index.js';
 
 const contactsRouter = express.Router();
 
@@ -14,7 +14,7 @@ contactsRouter.get('/', ctrl.listContacts);
 contactsRouter.get('/:id', isValidId, ctrl.getContactById);
 
 // додавання запису
-contactsRouter.post('/', ctrl.addContact);
+contactsRouter.post('/', isEmptyBody, ctrl.addContact);
 
 // видалення запису
 contactsRouter.delete('/:id', ctrl.removeContact);

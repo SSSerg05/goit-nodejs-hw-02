@@ -10,7 +10,10 @@ import ctrlWrapper from '../decorators/ctrlWrapper.js';
 
 // схема для валідації
 const addSchema = Joi.object({
-  name: Joi.string().required(),
+  name: Joi.string().required().messages({
+    "any.required": `"name" must be exist`,
+    "string.base": `"name" must be text`,
+  }),
   email: Joi.string().required(), 
   phone: Joi.string().required()
 })
