@@ -1,4 +1,6 @@
 import { Schema, model } from "mongoose"
+import { handleSaveError } from "./hooks.js";
+
 
 const contactShema = new Schema({
   name: {
@@ -8,13 +10,19 @@ const contactShema = new Schema({
   email: {
     type: String,
     unique: true,
+    match: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    // /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
     required: true,
   },
   phone: {
     type: String,
     required: true,
   },
-})
+}, {versionKey: false, timestamps: true});
+
+// hooks mongoose
+//contactShema.pre("")
+contactShema.post("save", handleSaveError);
 
 const Contact = model('contact', contactShema);
 

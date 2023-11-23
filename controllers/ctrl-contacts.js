@@ -19,6 +19,8 @@ const addSchema = Joi.object({
 const listContacts = async (req, res) => {
 
   const result = await Contact.find();
+//  const result = await Contact.find({},"-email"); // all fields without email
+//  const result = await Contact.find({}, 'name phone'); // all fields with name and phone
   if (!result) {
     throw HttpError(500, "Server not found");
   }
@@ -30,19 +32,20 @@ const listContacts = async (req, res) => {
 // // пошук по id
 const getContactById = async (req, res) => {
 
-//   const { id } = req.params;
-//   const result = await contacts.getContactById(id);
-//   if (!result) {
-//     throw new HttpError(404, "Not found");
-//   }
+  const { id } = req.params;
+  const result = await Contact.findById(id);
+  if (!result) {
+    throw new HttpError(404, "Not found");
+  }
   
-//   res.json(result);
+  res.json(result);
 }
 
 
 // // додавання запису
 const addContact = async (req, res) => {
 
+  // Joi validateBody
   const { error } = addSchema.validate(req.body);
   if (error) {
     throw HttpError(400, "missing required name field. " + error.message);
@@ -74,6 +77,7 @@ const removeContact = async (req, res) => {
 // // оновлення запису
 const updateContact = async (req, res) => {
 
+//   // Joi validateBody
 //   const { error } = addSchema.validate(req.body);
 //   if (error) { 
 //     throw HttpError(400, "Missing fields " + error.message);

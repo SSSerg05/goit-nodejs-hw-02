@@ -2,6 +2,8 @@ import express from 'express';
 
 import ctrl from "../../controllers/ctrl-contacts.js";
 
+import {validateBody} from '../../decorators/validateBody.js'; 
+
 const contactsRouter = express.Router();
 
 // список всіх контактів
