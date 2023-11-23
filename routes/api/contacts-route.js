@@ -14,12 +14,12 @@ contactsRouter.get('/', ctrl.listContacts);
 contactsRouter.get('/:id', isValidId, ctrl.getContactById);
 
 // додавання запису
-contactsRouter.post('/', isEmptyBody, ctrl.addContact);
+contactsRouter.post('/', isEmptyBody, validateBody, ctrl.addContact);
 
 // видалення запису
 contactsRouter.delete('/:id', ctrl.removeContact);
 
 // оновлення запису
-contactsRouter.put('/:id', ctrl.updateContact);
+contactsRouter.put('/:id', validateBody, ctrl.updateContact);
 
 export default contactsRouter
