@@ -1,4 +1,6 @@
 import { Schema, model } from "mongoose"
+import Joi from 'joi';
+
 import { handleSaveError, preUpdate } from "./hooks.js";
 
 
@@ -33,8 +35,14 @@ export const contactAddSchema = Joi.object({
     "any.required": `"name" must be exist`,
     "string.base": `"name" must be text`,
   }),
-  email: Joi.string().required(), 
-  phone: Joi.string().required()
+  email: Joi.string().required().messages({
+    "any.required": `"email" must be exist`,
+    "string.base": `"email" must be text`,
+  }), 
+  phone: Joi.string().required().messages({
+    "any.required": `"phone" must be exist`,
+    "string.base": `"phone" must be text`,
+  }),
 })
 
 export const contactUpdateSchema = Joi.object({

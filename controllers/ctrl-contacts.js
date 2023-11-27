@@ -1,5 +1,5 @@
-import express from 'express';
-import Joi from 'joi';
+// import express from 'express';
+// import Joi from 'joi';
 
 // import contacts from '../models/contacts.js';
 // model Mongoose
@@ -81,10 +81,10 @@ const removeContact = async (req, res) => {
 const updateContact = async (req, res) => {
 
   // Joi validateBody
-  const { error } = addSchema.validate(req.body);
-  if (error) { 
-    throw HttpError(400, "Missing fields " + error.message);
-  }
+  // const { error } = addSchema.validate(req.body);
+  // if (error) { 
+  //   throw HttpError(400, "Missing fields " + error.message);
+  // }
 
   const { id } = req.params;
 

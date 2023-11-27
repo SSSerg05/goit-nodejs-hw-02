@@ -15,7 +15,8 @@ contactsRouter.get('/', ctrl.listContacts);
 contactsRouter.get('/:id', isValidId, ctrl.getContactById);
 
 // додавання запису
-contactsRouter.post('/', isEmptyBody, validateBody(contactAddSchema), ctrl.addContact);
+// isEmptyBody, validateBody(contactAddSchema),
+contactsRouter.post('/', ctrl.addContact);
 
 // видалення запису
 contactsRouter.delete('/:id', ctrl.removeContact);
