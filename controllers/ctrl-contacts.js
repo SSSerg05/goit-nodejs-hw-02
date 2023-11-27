@@ -80,19 +80,19 @@ const removeContact = async (req, res) => {
 // // оновлення запису
 const updateContact = async (req, res) => {
 
-//   // Joi validateBody
-//   const { error } = addSchema.validate(req.body);
-//   if (error) { 
-//     throw HttpError(400, "Missing fields " + error.message);
-//   }
+  // Joi validateBody
+  const { error } = addSchema.validate(req.body);
+  if (error) { 
+    throw HttpError(400, "Missing fields " + error.message);
+  }
 
-//   const { id } = req.params;
-//   const result = await contacts.updateContact(id, req.body);
-//   if (!result) {
-//     throw HttpError(404, `Not found contact with id:${id}`);
-//   }
+  const { id } = req.params;
+  const result = await Contact.findByIdAndUpdate(id, req.body, {new: true, runValidators: true});
+  if (!result) {
+    throw HttpError(404, `Not found contact with id:${id}`);
+  }
 
-//   res.json(result);
+  res.json(result);
 }
 
 export default {

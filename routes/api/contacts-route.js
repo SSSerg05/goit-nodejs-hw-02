@@ -20,6 +20,6 @@ contactsRouter.post('/', isEmptyBody, validateBody, ctrl.addContact);
 contactsRouter.delete('/:id', ctrl.removeContact);
 
 // оновлення запису
-contactsRouter.put('/:id', validateBody, ctrl.updateContact);
+contactsRouter.put('/:id', ctrl.updateContact);
 
 export default contactsRouter
