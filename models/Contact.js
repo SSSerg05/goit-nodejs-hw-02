@@ -21,11 +21,32 @@ const contactShema = new Schema({
 }, {versionKey: false, timestamps: true});
 
 // hooks mongoose
-//contactShema.pre("")
 contactShema.post("save", handleSaveError);
 
 contactShema.pre("findOneAndUpdate", preUpdate);
 contactShema.post("findOneAndUpdate", handleSaveError);
+
+
+// схеми для Joi-валідації 
+export const contactAddSchema = Joi.object({
+  name: Joi.string().required().messages({
+    "any.required": `"name" must be exist`,
+    "string.base": `"name" must be text`,
+  }),
+  email: Joi.string().required(), 
+  phone: Joi.string().required()
+})
+
+export const contactUpdateSchema = Joi.object({
+  name: Joi.string().required(),
+  email: Joi.string().required(), 
+  phone: Joi.string().required(),
+})
+
+// export const contactFavoriteShema = Joi.object({
+//   favorite: Joi.boolean().required,
+// })
+
 
 const Contact = model('contact', contactShema);
 

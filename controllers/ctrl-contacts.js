@@ -9,14 +9,14 @@ import ctrlWrapper from '../decorators/ctrlWrapper.js';
 
 
 // схема для валідації
-const addSchema = Joi.object({
-  name: Joi.string().required().messages({
-    "any.required": `"name" must be exist`,
-    "string.base": `"name" must be text`,
-  }),
-  email: Joi.string().required(), 
-  phone: Joi.string().required()
-})
+// const addSchema = Joi.object({
+//   name: Joi.string().required().messages({
+//     "any.required": `"name" must be exist`,
+//     "string.base": `"name" must be text`,
+//   }),
+//   email: Joi.string().required(), 
+//   phone: Joi.string().required()
+// })
 
 // список всіх контактів
 const listContacts = async (req, res) => {
@@ -49,10 +49,10 @@ const getContactById = async (req, res) => {
 const addContact = async (req, res) => {
 
   // Joi validateBody
-  const { error } = addSchema.validate(req.body);
-  if (error) {
-    throw HttpError(400, "missing required name field. " + error.message);
-  }
+  // const { error } = addSchema.validate(req.body);
+  // if (error) {
+  //   throw HttpError(400, "missing required name field. " + error.message);
+  // }
 
   const result = await Contact.create(req.body);
   if (!result) {
@@ -87,7 +87,11 @@ const updateContact = async (req, res) => {
   }
 
   const { id } = req.params;
-  const result = await Contact.findByIdAndUpdate(id, req.body, {new: true, runValidators: true});
+
+  //якщо не створювати функцію перевірки
+  //const result = await Contact.findByIdAndUpdate(id, req.body, {new: true, runValidators: true});
+  const result = await Contact.findByIdAndUpdate(id, req.body);
+  
   if (!result) {
     throw HttpError(404, `Not found contact with id:${id}`);
   }
