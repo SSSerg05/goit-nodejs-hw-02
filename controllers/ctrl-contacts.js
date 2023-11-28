@@ -37,9 +37,6 @@ const getContactById = async (req, res) => {
 const addContact = async (req, res) => {
 
   const result = await Contact.create(req.body);
-  // if (!result) {
-  //   throw HttpError(404, "Cannot add Contact");
-  // }
   
   res.status(201).json(result);
 }
@@ -55,9 +52,6 @@ const removeContact = async (req, res) => {
   }
   
   res.status(200).json({ ...result._doc, message: "Contact deleted" });
-//  res.json({
-//    message: "Delete success"
-//  })
 }
 
 
