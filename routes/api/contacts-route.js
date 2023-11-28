@@ -21,8 +21,7 @@ contactsRouter.post('/', isEmptyBody, validateBody(contactAddSchema), ctrl.addCo
 contactsRouter.delete('/:id', isValidId, ctrl.removeContact);
 
 // оновлення запису
-//isValidId, isEmptyBody, validateBody(contactUpdateSchema),
-contactsRouter.put('/:id', ctrl.updateContact);
+contactsRouter.put('/:id', isValidId, isEmptyBody, validateBody(contactUpdateSchema), ctrl.updateContact);
 
 // Оновлення одного поля
 // contactsRouter.patch('/:id', isValidId, isEmptyBody, validateBody, ctrl.updateContact);
