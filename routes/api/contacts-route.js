@@ -24,6 +24,6 @@ contactsRouter.delete('/:id', isValidId, ctrl.removeContact);
 contactsRouter.put('/:id', isValidId, isEmptyBody, validateBody(contactUpdateSchema), ctrl.updateContact);
 
 // Оновлення одного поля
-contactsRouter.patch('/:id/favorite', isValidId, validateBody(contactFavoriteSchema), ctrl.updateFavorite);
+contactsRouter.patch('/:id/favorite', isValidId, isEmptyBody, validateBody(contactFavoriteSchema), ctrl.updateContact);
 
 export default contactsRouter

@@ -93,5 +93,5 @@ export default {
   removeContact: ctrlWrapper(removeContact),
   addContact: ctrlWrapper(addContact),
   updateContact: ctrlWrapper(updateContact),
-  updateFavorite: ctrlWrapper(updateFavorite),
+  // updateFavorite: ctrlWrapper(updateFavorite),
 }
