@@ -37,6 +37,7 @@ const getContactById = async (req, res) => {
 const addContact = async (req, res) => {
 
   const result = await Contact.create(req.body);
+  console.log(result, req.body);
   
   res.status(201).json(result);
 }
@@ -64,7 +65,7 @@ const updateContact = async (req, res) => {
   //const result = await Contact.findByIdAndUpdate(id, req.body, {new: true, runValidators: true});
   const result = await Contact.findByIdAndUpdate(id, req.body);
   console.log(result);
-  
+
   if (!result) {
     throw HttpError(404, `Not found contact with id:${id}`);
   }
