@@ -4,7 +4,7 @@ import ctrl from "../../controllers/ctrl-contacts.js";
 
 import { validateBody } from '../../decorators/index.js'; 
 import { isValidId, isEmptyBody } from '../../middlewares/index.js';
-import { contactAddSchema, contactUpdateSchema } from '../../models/Contact.js';
+import { contactAddSchema, contactFavoriteShema, contactUpdateSchema } from '../../models/Contact.js';
 
 const contactsRouter = express.Router();
 
@@ -24,6 +24,6 @@ contactsRouter.delete('/:id', isValidId, ctrl.removeContact);
 contactsRouter.put('/:id', isValidId, isEmptyBody, validateBody(contactUpdateSchema), ctrl.updateContact);
 
 // Оновлення одного поля
-// contactsRouter.patch('/:id', isValidId, isEmptyBody, validateBody, ctrl.updateContact);
+contactsRouter.patch('/:id/favorite', isValidId, isEmptyBody, validateBody(contactFavoriteShema), ctrl.updateFavorite);
 
 export default contactsRouter

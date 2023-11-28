@@ -19,6 +19,10 @@ const contactShema = new Schema({
     type: String,
     required: true,
   },
+  favorite: {
+    type: Boolean,
+    default: false,
+  },
 }, {versionKey: false, timestamps: true});
 
 // hooks mongoose
@@ -42,17 +46,19 @@ export const contactAddSchema = Joi.object({
     "any.required": `"phone" must be exist`,
     "string.base": `"phone" must be text`,
   }),
+  favorite: Joi.boolean().required(),
 })
 
 export const contactUpdateSchema = Joi.object({
   name: Joi.string(),
   email: Joi.string(), 
   phone: Joi.string(),
+  favorite: Joi.boolean(),
 })
 
-// export const contactFavoriteShema = Joi.object({
-//   favorite: Joi.boolean().required,
-// })
+export const contactFavoriteShema = Joi.object({
+  favorite: Joi.boolean().required,
+})
 
 
 const Contact = model('contact', contactShema);

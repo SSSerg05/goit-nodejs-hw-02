@@ -71,10 +71,27 @@ const updateContact = async (req, res) => {
   res.json(result);
 }
 
+
+const updateFavorite = async (req, res) => {
+  const { id } = req.params;
+
+  //якщо не створювати функцію перевірки
+  //const result = await Contact.findByIdAndUpdate(id, req.body, {new: true, runValidators: true});
+  const result = await Contact.findByIdAndUpdate(id, req.body);
+  
+  if (!result) {
+    throw HttpError(400, "missing field favorite");
+  }
+
+  res.json(result);
+}
+
+
 export default {
   listContacts: ctrlWrapper(listContacts),
   getContactById: ctrlWrapper(getContactById),
   removeContact: ctrlWrapper(removeContact),
   addContact: ctrlWrapper(addContact),
   updateContact: ctrlWrapper(updateContact),
+  updateFavorite: ctrlWrapper(updateFavorite),
 }
