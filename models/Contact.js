@@ -9,7 +9,7 @@ const mailRegExp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))
 const contactShema = new Schema({
   name: {
       type: String,
-      required: [true, "title must be exist"],
+      required: [true, "name must be exist"],
   },
   email: {
       type: String,
