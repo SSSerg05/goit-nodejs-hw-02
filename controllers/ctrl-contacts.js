@@ -38,7 +38,7 @@ const addContact = async (req, res) => {
 
   const result = await Contact.create(req.body);
   console.log(result, req.body);
-  
+
   res.status(201).json(result);
 }
 
@@ -61,7 +61,7 @@ const updateContact = async (req, res) => {
 
   const { id } = req.params;
 
-  //якщо не створювати функцію перевірки
+  //якщо не створювати hook preUpdate
   //const result = await Contact.findByIdAndUpdate(id, req.body, {new: true, runValidators: true});
   const result = await Contact.findByIdAndUpdate(id, req.body);
   console.log(result);
