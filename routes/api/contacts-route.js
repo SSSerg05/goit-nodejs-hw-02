@@ -2,7 +2,7 @@ import express from 'express';
 
 import ctrl from "../../controllers/ctrl-contacts.js";
 
-import {validateBody} from '../../decorators/validateBody.js'; 
+import { validateBody } from '../../decorators/index.js'; 
 import { isValidId, isEmptyBody } from '../../middlewares/index.js';
 import { contactAddSchema, contactUpdateSchema } from '../../models/Contact.js';
 
@@ -15,14 +15,14 @@ contactsRouter.get('/', ctrl.listContacts);
 contactsRouter.get('/:id', isValidId, ctrl.getContactById);
 
 // додавання запису
-// isEmptyBody, validateBody(contactAddSchema),
-contactsRouter.post('/', ctrl.addContact);
+contactsRouter.post('/', isEmptyBody, validateBody(contactAddSchema), ctrl.addContact);
 
 // видалення запису
-contactsRouter.delete('/:id', ctrl.removeContact);
+contactsRouter.delete('/:id', isValidId, ctrl.removeContact);
 
 // оновлення запису
-contactsRouter.put('/:id', isValidId, isEmptyBody, validateBody(contactUpdateSchema), ctrl.updateContact);
+//isValidId, isEmptyBody, validateBody(contactUpdateSchema),
+contactsRouter.put('/:id', ctrl.updateContact);
 
 // Оновлення одного поля
 // contactsRouter.patch('/:id', isValidId, isEmptyBody, validateBody, ctrl.updateContact);

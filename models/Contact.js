@@ -11,7 +11,7 @@ const contactShema = new Schema({
   },
   email: {
     type: String,
-    unique: true,
+    // unique: true,
     match: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
     // /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
     required: true,
@@ -46,9 +46,9 @@ export const contactAddSchema = Joi.object({
 })
 
 export const contactUpdateSchema = Joi.object({
-  name: Joi.string().required(),
-  email: Joi.string().required(), 
-  phone: Joi.string().required(),
+  name: Joi.string(),
+  email: Joi.string(), 
+  phone: Joi.string(),
 })
 
 // export const contactFavoriteShema = Joi.object({
