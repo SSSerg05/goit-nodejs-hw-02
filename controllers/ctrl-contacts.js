@@ -63,6 +63,7 @@ const updateContact = async (req, res) => {
   //якщо не створювати функцію перевірки
   //const result = await Contact.findByIdAndUpdate(id, req.body, {new: true, runValidators: true});
   const result = await Contact.findByIdAndUpdate(id, req.body);
+  console.log(result);
   
   if (!result) {
     throw HttpError(404, `Not found contact with id:${id}`);
