@@ -3,10 +3,14 @@ import express from 'express';
 import ctrl from "../../controllers/ctrl-contacts.js";
 
 import { validateBody } from '../../decorators/index.js'; 
-import { isValidId, isEmptyBody } from '../../middlewares/index.js';
+import { isValidId, isEmptyBody, authenticate } from '../../middlewares/index.js';
 import { contactAddSchema, contactFavoriteSchema, contactUpdateSchema } from '../../models/Contact.js';
 
 const contactsRouter = express.Router();
+
+// if all routes - private
+// else need add authenticate for all private-routes in first place
+contactsRouter.use(authenticate)
 
 // список всіх контактів
 contactsRouter.get('/', ctrl.listContacts);
