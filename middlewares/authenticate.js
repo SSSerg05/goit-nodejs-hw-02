@@ -23,6 +23,8 @@ const authenticate = async (req, res, next) => {
     if (!user) {
       throw HttpError(401, 'user not found');
     }
+    
+    req.user = user;
     next();
 
   } catch (error) {

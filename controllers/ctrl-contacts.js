@@ -7,8 +7,8 @@ import { ctrlWrapper } from '../decorators/index.js';
 
 // список всіх контактів
 const listContacts = async (req, res) => {
-
-  const result = await Contact.find();
+  const {_id: owner} = req.user;
+  const result = await Contact.find({owner});
 //  const result = await Contact.find({},"-email"); // all fields without email
 //  const result = await Contact.find({}, 'name phone'); // all fields with name and phone
   if (!result) {
@@ -36,7 +36,8 @@ const getContactById = async (req, res) => {
 // додавання запису
 const addContact = async (req, res) => {
 
-  const result = await Contact.create(req.body);
+  const {_id: owner} = req.user;
+  const result = await Contact.create({...req.body, owner});
   console.log(result, req.body);
 
   res.status(201).json(result);
