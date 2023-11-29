@@ -3,6 +3,7 @@ import logger from 'morgan';
 import cors from 'cors';
 import "dotenv/config";
 
+import authRouter from './routes/api/auth-route.js';
 import contactsRouter from './routes/api/contacts-route.js';
 
 const app = express();
@@ -13,7 +14,8 @@ app.use(logger(formatsLogger))
 app.use(cors())
 app.use(json())
 
-app.use('/api/contacts', contactsRouter)
+app.use('/api/auth', authRouter);
+app.use('/api/contacts', contactsRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: 'Not found' })
