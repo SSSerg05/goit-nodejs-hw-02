@@ -1,6 +1,7 @@
 // hooks mongoose
 export const handleSaveError = (error, data, next)=> {
-  error.status = 400;
+  const {code, name, status} = error;
+  status = 400;
   next();
 }
 
