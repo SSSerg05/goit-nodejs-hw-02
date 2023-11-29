@@ -23,8 +23,11 @@ const authenticate = async (req, res, next) => {
     if (!user) {
       throw HttpError(401, 'user not found');
     }
-    
+
+    // зберігаємо дані про користувача, який пройшов перевірку, для 
+    // коректного відображення даних цього користувача у базі (колекції) Контакти 
     req.user = user;
+    
     next();
 
   } catch (error) {
