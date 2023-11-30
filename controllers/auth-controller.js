@@ -48,9 +48,19 @@ const signIn = async (req, res) => {
     token,
   })
 
+  const getCurrent = async (req, res) => {
+    const {username, email} = req.user;
+    res.json ({
+      username,
+      email,
+    })
+
+  }
+
 }
 
 export default {
   signUp: ctrlWrapper(signUp),
   signIn: ctrlWrapper(signIn),
+  getCurrent: ctrlWrapper(getCurrent),
 }
