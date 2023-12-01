@@ -84,9 +84,24 @@ const signOut = async (req, res) => {
   })
 }
 
+const update = async (req, res) => {
+  const {_id} = res.user;
+  if (!_id) {
+    throw HttpError(401, "User not authorized");
+  }
+
+  const result = await User.findByIdAndUpdate(_id, req.body);
+  if (!result) {
+    throw HttpError(404, `Not found user with id:${_id}`);
+  }
+
+  res.json(result);
+}
+
 export default {
   signUp: ctrlWrapper(signUp),
   signIn: ctrlWrapper(signIn),
   getCurrent: ctrlWrapper(getCurrent),
   signOut: ctrlWrapper(signOut),
+  update: ctrlWrapper(update),
 }

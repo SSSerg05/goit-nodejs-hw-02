@@ -56,6 +56,9 @@ export const userSignInSchema = Joi.object({
   password: Joi.string().min(6).required(),
 })
 
+export const userUpdateSubscriptionSchema = Joi.object({
+  subscription: Joi.string().valid(...subscriptionList).required(),
+})
 
 const User = model('user', userShema);
 

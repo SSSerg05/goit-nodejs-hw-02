@@ -1,21 +1,21 @@
 import express from 'express';
 
-import authController from "../../controllers/users-controller.js";
+import usersController from "../../controllers/users-controller.js";
 import { validateBody } from '../../decorators/index.js'; 
 import { authenticate, isEmptyBody } from '../../middlewares/index.js';
-import { userSignUpSchema, userSignInSchema } from "../../models/User.js";
+import { userSignUpSchema, userSignInSchema, userUpdateSubscriptionSchema } from "../../models/User.js";
 
 const usersRoute = express.Router();
 
-usersRoute.post("/register", isEmptyBody, validateBody(userSignUpSchema), authController.signUp);
+usersRoute.post("/register", isEmptyBody, validateBody(userSignUpSchema), usersController.signUp);
 
-usersRoute.post("/login", isEmptyBody, validateBody(userSignInSchema), authController.signIn);
+usersRoute.post("/login", isEmptyBody, validateBody(userSignInSchema), usersController.signIn);
 
-usersRoute.get("/current", authenticate, authController.getCurrent);
+usersRoute.get("/current", authenticate, usersController.getCurrent);
 
-usersRoute.post("/logout", authenticate, authController.signOut);
+usersRoute.post("/logout", authenticate, usersController.signOut);
 
-usersRoute.patch('/subscription', authenticate, isEmptyBody, validateBody(userUpdateSubscriptionSchema), ctrl.updateSubscription);
+usersRoute.patch('/', authenticate, isEmptyBody, validateBody(userUpdateSubscriptionSchema), ctrl.update);
 
 
 export default usersRoute;
