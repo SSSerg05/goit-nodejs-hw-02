@@ -13,4 +13,7 @@ authRoute.post("/signin", isEmptyBody, validateBody(userSignInSchema), authContr
 
 authRoute.get("/current", authenticate, authController.getCurrent);
 
+authRoute.post("/signout", authenticate, authController.signOut);
+
+
 export default authRoute;

@@ -9,6 +9,8 @@ import { ctrlWrapper } from '../decorators/index.js';
 
 const {JWT_SECRET} = process.env;
 
+// Реєстрація користувача
+//------------------------
 const signUp = async (req, res) => {
 
   const { email, password } = req.body;
@@ -26,6 +28,8 @@ const signUp = async (req, res) => {
   })
 }
 
+// авторизований вхід 
+//------------------------
 const signIn = async (req, res) => {
   const {email, password} = req.body;
   const user = await User.findOne({email});
@@ -48,9 +52,11 @@ const signIn = async (req, res) => {
     token,
   })
 
+  // отримання даних про поточного користувача
+  //------------------------
   const getCurrent = async (req, res) => {
     const {username, email} = req.user;
-    
+
     res.json ({
       username,
       email,
@@ -58,7 +64,19 @@ const signIn = async (req, res) => {
 
   }
 
+  // вихід з облікового запису
+  //------------------------
+  const signOut = async (req, res) => {
+    const {_id} = res.user;
+    await User.findOneAndUpdate(_id, {token: ""})
+
+    res.join({
+      message: "Logout - correct!";
+    })
+  }
 }
+
+
 
 export default {
   signUp: ctrlWrapper(signUp),
