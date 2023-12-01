@@ -16,7 +16,7 @@ const signUp = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({email});
   if (user) {
-    throw HttpError(409, "Email already exist")
+    throw HttpError(409, "Email in use");
   }
 
   const hashPassword = await bcrypt.hash(password, 10)
@@ -25,6 +25,7 @@ const signUp = async (req, res) => {
   res.status(201).json({
     username: newUser.username,
     email: newUser.email,
+    subscription: newUser.subscription,
   })
 }
 
@@ -34,12 +35,12 @@ const signIn = async (req, res) => {
   const {email, password} = req.body;
   const user = await User.findOne({email});
   if (!user) {
-    throw HttpError(401, "Email or password invalide");
+    throw HttpError(401, "User not found");
   }
   
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (!passwordCompare) {
-    throw HttpError(401, "Email or password invalide");
+    throw HttpError(401, "Email or password wrong");
   }
 
   const payload = {
@@ -57,11 +58,14 @@ const signIn = async (req, res) => {
 // отримання даних про поточного користувача
 //------------------------
 const getCurrent =  async (req, res) => {
-  const {username, email} = req.user;
-
-  res.json ({
+  const {_id, username, email, subscription} = req.user;
+  if (!_id) {
+    throw HttpError(401, "User not authorized");
+  }
+  res.status(200).json ({
     username,
     email,
+    subscription,
   })
 }
 
@@ -69,9 +73,13 @@ const getCurrent =  async (req, res) => {
 //------------------------
 const signOut = async (req, res) => {
   const {_id} = res.user;
+  if (!_id) {
+    throw HttpError(401, "User not authorized");
+  }
+
   await User.findOneAndUpdate(_id, {token: ""});
 
-  res.join({
+  res.status(204).join({
     message: "Logout - correct!",
   })
 }

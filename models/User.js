@@ -4,7 +4,7 @@ import Joi from 'joi';
 import { handleSaveError, preUpdate } from "./hooks.js";
 
 const mailRegExp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-const subscriptionEnum = ["starter", "pro", "business"];
+const subscriptionList = ["starter", "pro", "business"];
 const userShema = new Schema({
   username: {
       type: String,
@@ -23,8 +23,8 @@ const userShema = new Schema({
   },
   subscription: {
     type: String,
-    enum: subscriptionEnum,
-    default: "starter"
+    enum: subscriptionList,
+    default: "starter",
   },
   token: {
     type: String,
@@ -46,7 +46,7 @@ export const userSignUpSchema = Joi.object({
   username: Joi.string().required(),
   email: Joi.string().pattern(mailRegExp).required(),
   password: Joi.string().min(6).required(),
-  subscription: Joi.string(),
+  subscription: Joi.string().valid(...subscriptionList).required(),
   token: Joi.string(),
 })
 

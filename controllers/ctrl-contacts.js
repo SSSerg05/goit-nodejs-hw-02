@@ -7,8 +7,18 @@ import { ctrlWrapper } from '../decorators/index.js';
 
 // список всіх контактів
 const listContacts = async (req, res) => {
-  const {_id: owner} = req.user;
-  const result = await Contact.find({owner});
+  //пагінація
+  const {page=1, limit=10, favorite} = req.query; 
+  const skip = (page - 1) * limit;
+
+  // отримати всі дані авторизованого користувача
+  const {_id: owner} = req.user;  
+  if (typeof favorite === "undefined") {
+    const result = await Contact.find({owner}, {skip, limit}.populate("owner", "username email"));
+  } else {
+    const result = await Contact.find({owner}, {skip, limit, favorite}.populate("owner", "username email"));
+  }
+
 //  const result = await Contact.find({},"-email"); // all fields without email
 //  const result = await Contact.find({}, 'name phone'); // all fields with name and phone
   if (!result) {
