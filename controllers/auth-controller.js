@@ -71,15 +71,14 @@ const signIn = async (req, res) => {
     await User.findOneAndUpdate(_id, {token: ""})
 
     res.join({
-      message: "Logout - correct!";
+      message: "Logout - correct!"
     })
   }
 }
-
-
 
 export default {
   signUp: ctrlWrapper(signUp),
   signIn: ctrlWrapper(signIn),
   getCurrent: ctrlWrapper(getCurrent),
+  signOut: ctrlWrapper(signOut),
 }
