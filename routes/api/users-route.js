@@ -15,7 +15,7 @@ usersRoute.get("/current", authenticate, usersController.getCurrent);
 
 usersRoute.post("/logout", authenticate, usersController.signOut);
 
-usersRoute.patch('/', authenticate, isEmptyBody, validateBody(userUpdateSubscriptionSchema), ctrl.update);
+usersRoute.patch('/', authenticate, isEmptyBody, validateBody(userUpdateSubscriptionSchema), usersController.update);
 
 
 export default usersRoute;

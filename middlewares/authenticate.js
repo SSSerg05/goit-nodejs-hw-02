@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 
-import { HttpError } from "../helpers/HttpError.js";
-import { ctrlWrapper } from "../decorators";
-import User from "../models/User";
+import HttpError from "../helpers/HttpError.js";
+import { ctrlWrapper } from "../decorators/index.js";
+import User from "../models/User.js";
 
 const { JWT_SECRET} = process.env;
 
