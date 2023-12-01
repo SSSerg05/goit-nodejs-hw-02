@@ -51,29 +51,29 @@ const signIn = async (req, res) => {
   res.json({
     token,
   })
+}
 
-  // отримання даних про поточного користувача
-  //------------------------
-  const getCurrent = async (req, res) => {
-    const {username, email} = req.user;
 
-    res.json ({
-      username,
-      email,
-    })
+// отримання даних про поточного користувача
+//------------------------
+const getCurrent =  async (req, res) => {
+  const {username, email} = req.user;
 
-  }
+  res.json ({
+    username,
+    email,
+  })
+}
 
-  // вихід з облікового запису
-  //------------------------
-  const signOut = async (req, res) => {
-    const {_id} = res.user;
-    await User.findOneAndUpdate(_id, {token: ""})
+// вихід з облікового запису
+//------------------------
+const signOut = async (req, res) => {
+  const {_id} = res.user;
+  await User.findOneAndUpdate(_id, {token: ""});
 
-    res.join({
-      message: "Logout - correct!"
-    })
-  }
+  res.join({
+    message: "Logout - correct!";
+  })
 }
 
 export default {
