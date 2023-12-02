@@ -48,6 +48,7 @@ const signIn = async (req, res) => {
   }
 
   const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "23h"});
+  await User.findByIdAndUpdate(user._id, {token});
   
   res.json({
     token,
@@ -66,18 +67,19 @@ const getCurrent =  async (req, res) => {
     username,
     email,
     subscription,
+    token,
   })
 }
 
 // вихід з облікового запису
 //------------------------
 const signOut = async (req, res) => {
-  const {_id} = res.user;
+  const {_id} = req.user;
   if (!_id) {
     throw HttpError(401, "User not authorized");
   }
 
-  await User.findOneAndUpdate(_id, {token: ""});
+  await User.findOneAndUpdate(_id, {token: null});
 
   res.status(204).join({
     message: "Logout - correct!",
@@ -85,7 +87,7 @@ const signOut = async (req, res) => {
 }
 
 const update = async (req, res) => {
-  const {_id} = res.user;
+  const {_id} = req.user;
   if (!_id) {
     throw HttpError(401, "User not authorized");
   }

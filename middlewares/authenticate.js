@@ -12,7 +12,7 @@ const authenticate = async (req, res, next) => {
     throw HttpError(401, 'Authorization header not found.');
   }
 
-  const {bearer, token} = authorization.split(" ");
+  const [bearer, token] = authorization.split(" ");
   if (bearer !== "Bearer") {
     throw HttpError(401, 'Token not valid');
   }
@@ -20,7 +20,8 @@ const authenticate = async (req, res, next) => {
   try {
     const { id } = jwt.verify(token, JWT_SECRET);
     const user = await User.findById(id)
-    if (!user || !user.token || user.token !== token) {
+    // console.log(user);
+    if (!user) { ///|| !user.token || user.token !== token) {
       throw HttpError(401, 'user not found');
     }
 
