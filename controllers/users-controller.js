@@ -49,7 +49,7 @@ const signIn = async (req, res) => {
 
   const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "23h"});
   await User.findByIdAndUpdate(user._id, {token});
-  
+
   res.json({
     token,
   })
@@ -59,11 +59,11 @@ const signIn = async (req, res) => {
 // отримання даних про поточного користувача
 //------------------------
 const getCurrent =  async (req, res) => {
-  const {_id, username, email, subscription} = req.user;
+  const {_id, username, email, subscription, token} = req.user;
   if (!_id) {
     throw HttpError(401, "User not authorized");
   }
-  res.status(200).json ({
+  res.status(200).json({
     username,
     email,
     subscription,
@@ -81,8 +81,8 @@ const signOut = async (req, res) => {
 
   await User.findOneAndUpdate(_id, {token: null});
 
-  res.status(204).join({
-    message: "Logout - correct!",
+  res.status(204).json({
+    message: "Logout success"
   })
 }
 
