@@ -64,10 +64,8 @@ const getCurrent =  async (req, res) => {
     throw HttpError(401, "User not authorized");
   }
   res.status(200).json({
-    username,
     email,
     subscription,
-    token,
   })
 }
 
@@ -81,9 +79,7 @@ const signOut = async (req, res) => {
 
   await User.findOneAndUpdate(_id, {token: null});
 
-  res.status(204).json({
-    message: "Logout success"
-  })
+  res.status(204)
 }
 
 const update = async (req, res) => {
