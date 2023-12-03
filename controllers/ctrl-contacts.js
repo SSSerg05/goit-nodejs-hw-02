@@ -12,18 +12,15 @@ const listContacts = async (req, res) => {
   const {_id: owner} = req.user;
 
   //пагінація
-  const {page=1, limit=10, favorite} = req.query; 
-  console.log(page, limit, favorite);
+  const {page=1, limit=10, ...filterParams} = req.query; 
+  // console.log(page, limit, favorite);
   const skip = (page - 1) * limit;
 
   // filter
-  let fieldsFind = {owner};
-  if (typeof favorite !== "undefined") {
-    fieldsFind = {...fieldsFind, favorite}
-  }
+  const filter = {owner, ...filterParams};
     
   const result = await Contact.find(
-    fieldsFind,
+    filter,
    "-createdAt -updatedAt",
     {skip, limit, favorite}
   ).populate("owner","username email");
