@@ -1,13 +1,15 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import fs from "fs/promises";
+import path from "path";
 
 import User from "../models/User.js";
-
 import HttpError from '../helpers/HttpError.js';
 import { ctrlWrapper } from '../decorators/index.js';
 
 
 const {JWT_SECRET} = process.env;
+const avatarsPath = path.resolve("public", "avatars");
 
 // Реєстрація користувача
 //------------------------
@@ -19,8 +21,20 @@ const signUp = async (req, res) => {
     throw HttpError(409, "Email in use");
   }
 
+  // upload + save path for file img avatars
+  const {path: oldPath, filename } = req.file;
+  const newPath = path.join(postersPath, filename);
+  await fs.rename(oldPath, newPath);
+
+  const avatarURL = path.join("public", "avatars", filename);
+
+  // save User
   const hashPassword = await bcrypt.hash(password, 10)
-  const newUser = await User.create({...req.body, password: hashPassword});
+  const newUser = await User.create({
+    ...req.body, 
+    password: hashPassword, 
+    avatarURL,
+  });
   
   res.status(201).json({
     username: newUser.username,
