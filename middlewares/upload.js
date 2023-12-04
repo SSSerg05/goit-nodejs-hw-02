@@ -1,4 +1,5 @@
 import multer from "multer";
+import HttpError from "../helpers/HttpError.js";
 
 const destination = path.resolve("tmp");
 
@@ -17,3 +18,19 @@ const limits = {
   fileSize: 5 * 1024 * 1024, //(5MB)
 }
 
+const fileFilter = (req, file, cb) => {
+  const extention = file.originalname.split('.').pop();
+  if (extention === 'exe') {
+    cb(HttpError(400, "Invalid file extention"));
+  }
+
+  cb(null, true);
+}
+
+const upload = multer({
+  storage,
+  limits,
+  fileFilter,
+})
+
+export default upload;
