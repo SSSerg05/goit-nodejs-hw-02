@@ -2,7 +2,7 @@
   "name": "goit-nodejs-hw-02-06",
   "version": "0.0.0",
   "private": true,
-  "main": "index.js",
+  "main": "app.js",
   "type": "module",
   "homepage": "https://SSSerg05.github.io/goit-nodejs-hw-02-06/",
   "scripts": {
@@ -17,7 +17,11 @@
     "cors": "2.8.5",
     "cross-env": "7.0.3",
     "express": "4.17.1",
-    "morgan": "1.10.0"
+    "fs": "^0.0.1-security",
+    "joi": "^17.10.0",
+    "morgan": "1.10.0",
+    "nanoid": "^4.0.2",
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "eslint": "7.19.0",
