@@ -1,22 +1,16 @@
-import express from 'express';
-import Joi from 'joi';
+// model Mongoose
+import Contact from '../models/Contact.js';
 
-import contacts from '../models/contacts.js';
 import HttpError from '../helpers/HttpError.js';
-import ctrlWrapper from '../decorators/ctrlWrapper.js';
+import { ctrlWrapper } from '../decorators/index.js';
 
-
-// схема для валідації
-const addSchema = Joi.object({
-  name: Joi.string().required(),
-  email: Joi.string().required(), 
-  phone: Joi.string().required()
-})
 
 // список всіх контактів
 const listContacts = async (req, res) => {
 
-  const result = await contacts.listContacts();
+  const result = await Contact.find();
+//  const result = await Contact.find({},"-email"); // all fields without email
+//  const result = await Contact.find({}, 'name phone'); // all fields with name and phone
   if (!result) {
     throw HttpError(500, "Server not found");
   }
@@ -29,9 +23,10 @@ const listContacts = async (req, res) => {
 const getContactById = async (req, res) => {
 
   const { id } = req.params;
-  const result = await contacts.getContactById(id);
+  const result = await Contact.findById(id);
+  
   if (!result) {
-    throw new HttpError(404, "Not found");
+    throw HttpError(404, `Contact with id=${id} - Not found`);
   }
   
   res.json(result);
@@ -41,44 +36,36 @@ const getContactById = async (req, res) => {
 // додавання запису
 const addContact = async (req, res) => {
 
-  const { error } = addSchema.validate(req.body);
-  if (error) {
-    throw HttpError(400, "missing required name field. " + error.message);
-  }
+  const result = await Contact.create(req.body);
+  console.log(result, req.body);
 
-  const result = await contacts.addContact(req.body);
-  if (!result) {
-    throw HttpError(404, "Cannot add Contact");
-  }
-  
   res.status(201).json(result);
 }
 
 
 // видалення запису
 const removeContact = async (req, res) => {
-
   const { id } = req.params;
-  const result = await contacts.removeContact(id);
+  const result = await Contact.findByIdAndDelete(id);
   
   if (!result) {
     throw HttpError(404, `Not found id:${id}`);
   }
   
-  res.status(200).json({ ...result, message: "Contact deleted" });
+  res.status(200).json({ ...result._doc, message: "Contact deleted" });
 }
 
 
 // оновлення запису
 const updateContact = async (req, res) => {
 
-  const { error } = addSchema.validate(req.body);
-  if (error) { 
-    throw HttpError(400, "Missing fields " + error.message);
-  }
-
   const { id } = req.params;
-  const result = await contacts.updateContact(id, req.body);
+
+  //якщо не створювати hook preUpdate
+  //const result = await Contact.findByIdAndUpdate(id, req.body, {new: true, runValidators: true});
+  const result = await Contact.findByIdAndUpdate(id, req.body);
+  console.log(result);
+
   if (!result) {
     throw HttpError(404, `Not found contact with id:${id}`);
   }
@@ -86,10 +73,24 @@ const updateContact = async (req, res) => {
   res.json(result);
 }
 
+
+// const updateFavorite = async (req, res) => {
+//   const { id } = req.params;
+//   const result = await Contact.findByIdAndUpdate(id, req.body);
+  
+//   if (!result) {
+//     throw HttpError(400, "missing field favorite");
+//   }
+
+//   res.json(result);
+// }
+
+
 export default {
   listContacts: ctrlWrapper(listContacts),
   getContactById: ctrlWrapper(getContactById),
   removeContact: ctrlWrapper(removeContact),
   addContact: ctrlWrapper(addContact),
   updateContact: ctrlWrapper(updateContact),
+  // updateFavorite: ctrlWrapper(updateFavorite),
 }
