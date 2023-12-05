@@ -25,7 +25,7 @@ const signUp = async (req, res) => {
 
   // for upload + save path for file img avatars
   ////========================
-  // const {path: oldPath, filename } = req.file;
+  const {path: oldPath, filename } = req.file;
   // const newPath = path.join(avatarsPath, filename);
   
   // переміщення файлу з папки ../tmp до ../public/avatars
@@ -45,14 +45,8 @@ const signUp = async (req, res) => {
 
     //for gravatar... create img-avatar from email user
   ////========================
-  const gravatarURL = gravatar.url(email, {s:'250', d: 'monsterid'});
-  console.log("gravata", gravatarURL);
-
-  const {url: avatarUrl} = await cloudinary.uploader.upload(
-    gravatarURL,    /// req.file.path, 
-    { folder: "avatars", }
-  );
-  console.log(avatarUrl);
+  const avatarURL = gravatar.url(email, {s:'250',});
+  console.log("gravata", avatarURL);
 //  await fs.unlink(req.file.path); // видалення файлу з папки tmp
 
   // save User
@@ -60,13 +54,14 @@ const signUp = async (req, res) => {
   const newUser = await User.create({
     ...req.body, 
     password: hashPassword, 
-    avatarURL: avatarUrl,
+    avatarURL,
   });
   
   res.status(201).json({
     username: newUser.username,
     email: newUser.email,
     subscription: newUser.subscription,
+    avatarURL: newUser.avatarURL,
   })
 }
 
@@ -137,10 +132,37 @@ const update = async (req, res) => {
   res.json(result);
 }
 
+
+const updateAvatar = async (req, res) => {
+  const {_id} = req.user;
+  if (!_id) {
+    throw HttpError(401, "User not authorized");
+  }
+
+  const {path: oldPath, filename } = req.file;
+  const newPath = path.join(avatarsPath, filename);
+  
+  // переміщення файлу з папки ../tmp до ../public/avatars
+  await fs.rename(oldPath, newPath);
+
+  // формування нового відносного шляху до файла
+   const avatarUrl = path.join("avatars", filename);
+
+  const result = await User.findByIdAndUpdate(_id, {...req.body, avatarURL: avatarUrl});
+  if (!result) {
+    throw HttpError(404, `Not found user with id:${_id}`);
+  }
+
+  res.json(result);
+}
+
+
+
 export default {
   signUp: ctrlWrapper(signUp),
   signIn: ctrlWrapper(signIn),
   getCurrent: ctrlWrapper(getCurrent),
   signOut: ctrlWrapper(signOut),
   update: ctrlWrapper(update),
+  updateAvatar: ctrlWrapper(updateAvatar),
 }
