@@ -6,6 +6,7 @@ import gravatar from "gravatar";
 
 import User from "../models/User.js";
 import HttpError from '../helpers/HttpError.js';
+import cloudinary from "../helpers/cloudinary.js";
 import { ctrlWrapper } from '../decorators/index.js';
 
 
@@ -22,16 +23,34 @@ const signUp = async (req, res) => {
     throw HttpError(409, "Email in use");
   }
 
-  // upload + save path for file img avatars
-  const {path: oldPath, filename } = req.file;
-  const newPath = path.join(postersPath, filename);
-  await fs.rename(oldPath, newPath);
+  // for upload + save path for file img avatars
+  ////========================
+  // const {path: oldPath, filename } = req.file;
+  // const newPath = path.join(avatarsPath, filename);
+  
+  // переміщення файлу з папки ../tmp до ../public/avatars
+  // await fs.rename(oldPath, newPath);
 
-  //create img-avatar from email user
-  const url = gravatar.url(email, {s:'200'})
-  console.log(url);
+  // формування нового відносного шляху до файла
+  //  const avatarURL = path.join("avatars", filename);
 
-  const avatarURL = path.join("avatars", filename);
+
+  ////for cloudinary...
+  ////========================
+  // завантажуємо файл до сховища cloudinary
+  ////const fileData = await cloudinary.uploader.upload(
+  ////  <шлях_до_файлу_який_хочемо_завантажити>,
+  ////  { <назва_папки_куди_завантажуємо_файл>, },
+  ////)
+  const {url: avatarURL} = await cloudinary.uploader.upload(
+    req.file.path, 
+    { folder: "avatars", }
+  );
+//  await fs.unlink(req.file.path); // видалення файлу з папки tmp
+
+  //for gravatar... create img-avatar from email user
+  ////========================
+  // const avatarURL = gravatar.url(email, {s:'200'});
 
   // save User
   const hashPassword = await bcrypt.hash(password, 10)
