@@ -42,30 +42,25 @@ const signUp = async (req, res) => {
   ////  <шлях_до_файлу_який_хочемо_завантажити>,
   ////  { <назва_папки_куди_завантажуємо_файл>, },
   ////)
-  // const {url: avatarURL} = await cloudinary.uploader.upload(
-  //   req.file.path, 
-  //   { folder: "avatars", }
-  // );
-//  await fs.unlink(req.file.path); // видалення файлу з папки tmp
 
-  //for gravatar... create img-avatar from email user
+    //for gravatar... create img-avatar from email user
   ////========================
   const gravatarURL = gravatar.url(email, {s:'250', d: 'monsterid'});
-  console.log(avatarURL);
+  console.log("gravata", gravatarURL);
 
-  // переміщення файлу з папки ../tmp до ../public/avatars
-  const {path: oldPath, filename } = req.file;
-  const newPath = path.join(avatarsPath, gravatarURL);
-  
-  // переміщення файлу з папки ../tmp до ../public/avatars
-  await fs.rename(oldPath, newPath);
+  const {url: avatarUrl} = await cloudinary.uploader.upload(
+    gravatarURL,    /// req.file.path, 
+    { folder: "avatars", }
+  );
+  console.log(avatarUrl);
+//  await fs.unlink(req.file.path); // видалення файлу з папки tmp
 
   // save User
   const hashPassword = await bcrypt.hash(password, 10)
   const newUser = await User.create({
     ...req.body, 
     password: hashPassword, 
-    avatarURL,
+    avatarURL: avatarUrl,
   });
   
   res.status(201).json({
