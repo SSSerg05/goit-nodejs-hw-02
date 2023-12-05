@@ -7,7 +7,7 @@ import { userSignUpSchema, userSignInSchema, userUpdateSubscriptionSchema } from
 
 const usersRoute = express.Router();
 
-usersRoute.post("/register", isEmptyBody, validateBody(userSignUpSchema), usersController.signUp);
+usersRoute.post("/register", upload.single("avatarURL"), isEmptyBody, validateBody(userSignUpSchema), usersController.signUp);
 
 usersRoute.post("/login", isEmptyBody, validateBody(userSignInSchema), usersController.signIn);
 
@@ -17,5 +17,6 @@ usersRoute.post("/logout", authenticate, usersController.signOut);
 
 usersRoute.patch('/', authenticate, upload.single("avatarURL"), isEmptyBody, validateBody(userUpdateSubscriptionSchema), usersController.update);
 
+usersRoute.patch('/avatars', authenticate, upload.single("avatarURL"), isEmptyBody, validateBody(userUpdateSubscriptionSchema), usersController.update);
 
 export default usersRoute;
