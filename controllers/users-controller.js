@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import fs from "fs/promises";
 import path from "path";
+import gravatar from "gravatar";
 
 import User from "../models/User.js";
 import HttpError from '../helpers/HttpError.js';
@@ -25,6 +26,10 @@ const signUp = async (req, res) => {
   const {path: oldPath, filename } = req.file;
   const newPath = path.join(postersPath, filename);
   await fs.rename(oldPath, newPath);
+
+  //create img-avatar from email user
+  const url = gravatar.url(email, {s:'200'})
+  console.log(url);
 
   const avatarURL = path.join("avatars", filename);
 
