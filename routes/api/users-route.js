@@ -15,8 +15,8 @@ usersRoute.get("/current", authenticate, usersController.getCurrent);
 
 usersRoute.post("/logout", authenticate, usersController.signOut);
 
-usersRoute.patch('/', authenticate, upload.single("avatarURL"), isEmptyBody, validateBody(userUpdateSubscriptionSchema), usersController.update);
+usersRoute.patch('/', authenticate, isEmptyBody, validateBody(userUpdateSubscriptionSchema), usersController.update);
 
-usersRoute.patch('/avatars', authenticate, upload.single("avatarURL"), isEmptyBody, validateBody(userUpdateAvatarSchema), usersController.update);
+usersRoute.patch('/avatars', authenticate, upload.single("avatarURL"), isEmptyBody, validateBody(userUpdateAvatarSchema), usersController.updateAvatar);
 
 export default usersRoute;
