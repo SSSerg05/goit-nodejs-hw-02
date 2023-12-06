@@ -1,7 +1,6 @@
 import multer from "multer";
 import path from "path";
 import HttpError from "../helpers/HttpError.js";
-import { log } from "console";
 
 const destination = path.resolve("tmp");
 
@@ -10,7 +9,7 @@ const storage = multer.diskStorage({
   destination,
   filename: (req, file, cb) => {
     //console.log('upload', req.body);
-    const {_id} = req.body
+    const {_id} = req.user;
     //const uniquePrefix = `${Date.now()}_${Math.round(Math.random() * 1E9)}`;
     //const filename = `${uniquePrefix}_${file.originalname}`;
     const filename = `${_id}_${file.originalname}`;

@@ -32,7 +32,7 @@ const userShema = new Schema({
   },
   avatarURL: {
     type: String,
-   require: false,  
+    default: null,  
   }
 }, {versionKey: false, timestamps: true});
 
@@ -65,7 +65,7 @@ export const userUpdateSubscriptionSchema = Joi.object({
 })
 
 export const userUpdateAvatarSchema = Joi.object({
-  avatarURL: Joi.string(),
+  avatarURL: Joi.string().required(),
 })
 
 const User = model('user', userShema);
