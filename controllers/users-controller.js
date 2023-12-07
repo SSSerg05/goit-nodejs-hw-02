@@ -146,8 +146,9 @@ const updateAvatar = async (req, res) => {
     throw HttpError(401, "User not authorized");
   }
 
+  const {path: oldPath, filename } = req.file;
   try {
-    const {path: oldPath, filename } = req.file;
+    
     const newPath = path.join(avatarsPath, filename);
     
     // переміщення файлу з папки ../tmp до ../public/avatars
@@ -155,6 +156,7 @@ const updateAvatar = async (req, res) => {
     
     // формування нового відносного шляху до файла
     const avatarURL = path.join("avatars", filename);
+    
     Jimp.read(avatarURL)
       .then((image) => {
         return image
