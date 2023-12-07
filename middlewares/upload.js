@@ -8,11 +8,8 @@ const destination = path.resolve("tmp");
 const storage = multer.diskStorage({
   destination,
   filename: (req, file, cb) => {
-    //console.log('upload', req.body);
-    const {_id} = req.user;
-    //const uniquePrefix = `${Date.now()}_${Math.round(Math.random() * 1E9)}`;
-    //const filename = `${uniquePrefix}_${file.originalname}`;
-    const filename = `${_id}_${file.originalname}`;
+    const uniquePrefix = `${Date.now()}_${Math.round(Math.random() * 1E9)}`;
+    const filename = `${uniquePrefix}_${file.originalname}`;
 
     cb(null, filename);
   },

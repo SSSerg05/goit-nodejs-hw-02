@@ -9,6 +9,7 @@ import Jimp from "jimp";
 import User from "../models/User.js";
 import HttpError from '../helpers/HttpError.js';
 import { ctrlWrapper } from '../decorators/index.js';
+import { error } from "console";
 
 
 const {JWT_SECRET} = process.env;
@@ -141,46 +142,56 @@ const update = async (req, res) => {
 
 const updateAvatar = async (req, res) => {
 
-  const {_id} = req.user;
+  const {_id, avatarURL} = req.user;
   if (!_id) {
     throw HttpError(401, "User not authorized");
   }
 
+  // видаляємо старий аватар (якщо це можливо)
+  const deletedFile = path.basename(avatarURL);
+  const deletedPath = path.join(avatarsPath, deletedFile);
+  try {
+    await fs.unlink(deletedPath); 
+  } catch (error) {
+    console.log(error);
+  }
+
   const {path: oldPath, filename } = req.file;
   try {
-    
+
+    // визначаємо новий шлях до файлу 
     const newPath = path.join(avatarsPath, filename);
     
     // переміщення файлу з папки ../tmp до ../public/avatars
     await fs.rename(oldPath, newPath);
     
     // формування нового відносного шляху до файла
-    const avatarURL = path.join("avatars", filename);
+    const avatarImage = path.join("avatars", filename);
     
-    Jimp.read(avatarURL)
-      .then((image) => {
-        return image
-        .resize(250, 250)
-        .quality(60)
-        .write(avatarURL)
-      })
-      .catch((err) => {
-        console.log(err);
-      })
+    // зміна якості+розміру картинки
+    const modifyFile = path.basename(avatarImage);
+    const modifyPath = path.join(avatarsPath, modifyFile);
+    Jimp.read(modifyPath, async (err, img) => {
+      if (error) 
+        throw HttpError(404, `Not found avatar file`);
+
+      await img.resize(250, 250) // resize
+        .quality(60) // set JPEG quality
+        .writeAsync(modifyPath); // save
+    });
 
     // оновлення даних
-    const result = await User.findByIdAndUpdate(_id, {...req.body, avatarURL});
+    const result = await User.findByIdAndUpdate(_id, {avatarURL: avatarImage});
     if (!result) {
       throw HttpError(404, `Not found user with id:${_id}`);
     }
     
     res.status(200).json(
-      result, 
-      avatarURL,
+      avatarImage,
     );
   } catch (error) {
-    await fs.unlink(oldPath);
-    throw HttpError(403, `Avatar cannot add in folder`);
+      await fs.unlink(oldPath);
+      throw HttpError(404, `Cannot add avatar file in folder`);
   }
 
 }
