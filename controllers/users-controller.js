@@ -9,7 +9,7 @@ import Jimp from "jimp";
 import User from "../models/User.js";
 import HttpError from '../helpers/HttpError.js';
 import { ctrlWrapper } from '../decorators/index.js';
-import { error } from "console";
+import { error, log } from "console";
 
 
 const {JWT_SECRET} = process.env;
@@ -161,10 +161,11 @@ const updateAvatar = async (req, res) => {
   try {
 
     // зміна якості+розміру картинки
+    // console.log(oldPath);
     Jimp.read(oldPath, async (err, img) => {
-      if (error) {
-        return console.log(`Not found avatar file ${oldPath}`);
-      }
+      // if (error) {
+      //   return console.log(`Not found avatar file ${oldPath}`);
+      // }
 
       await img.resize(256, 256) // resize
         .quality(60) // set JPEG quality
