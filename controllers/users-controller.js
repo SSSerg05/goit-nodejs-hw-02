@@ -147,7 +147,7 @@ const updateAvatar = async (req, res) => {
     throw HttpError(401, "User not authorized");
   }
 
-  // видаляємо старий аватар (якщо це можливо)
+  // видаляємо стару картинку аватара (якщо це можливо)
   const deletedFile = path.basename(avatarURL);
   const deletedPath = path.join(avatarsPath, deletedFile);
   try {
@@ -156,29 +156,30 @@ const updateAvatar = async (req, res) => {
     console.log(error);
   }
 
+  // картинка аватару у папці ../tmp
   const {path: oldPath, filename } = req.file;
   try {
 
-    // визначаємо новий шлях до файлу 
+    // зміна якості+розміру картинки
+    Jimp.read(oldPath, async (err, img) => {
+      if (error) {
+        return console.log(`Not found avatar file ${oldPath}`);
+      }
+
+      await img.resize(256, 256) // resize
+        .quality(60) // set JPEG quality
+        .greyscale() // set greyscale
+        .writeAsync(oldPath); // save
+    });
+
+    // визначаємо новий повний шлях до файлу ../public/avatars
     const newPath = path.join(avatarsPath, filename);
     
     // переміщення файлу з папки ../tmp до ../public/avatars
     await fs.rename(oldPath, newPath);
-    
+        
     // формування нового відносного шляху до файла
     const avatarImage = path.join("avatars", filename);
-    
-    // зміна якості+розміру картинки
-    const modifyFile = path.basename(avatarImage);
-    const modifyPath = path.join(avatarsPath, modifyFile);
-    Jimp.read(modifyPath, async (err, img) => {
-      if (error) 
-        throw HttpError(404, `Not found avatar file`);
-
-      await img.resize(250, 250) // resize
-        .quality(60) // set JPEG quality
-        .writeAsync(modifyPath); // save
-    });
 
     // оновлення даних
     const result = await User.findByIdAndUpdate(_id, {avatarURL: avatarImage});
@@ -195,7 +196,6 @@ const updateAvatar = async (req, res) => {
   }
 
 }
-
 
 
 export default {
