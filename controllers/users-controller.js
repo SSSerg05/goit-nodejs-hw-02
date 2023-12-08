@@ -25,7 +25,7 @@ const signUp = async (req, res) => {
     throw HttpError(409, "Email in use");
   }
 
-  // for upload + save path for file img avatars
+  // variable for upload + save path for file img avatars
   ////========================
   // const {path: oldPath, filename } = req.file;
   // const newPath = path.join(avatarsPath, filename);
@@ -37,7 +37,7 @@ const signUp = async (req, res) => {
   //  const avatarURL = path.join("avatars", filename);
 
 
-  ////for cloudinary...
+  ////variable for cloudinary...
   ////========================
   // завантажуємо файл до сховища cloudinary
   ////const fileData = await cloudinary.uploader.upload(
@@ -52,7 +52,7 @@ const signUp = async (req, res) => {
   // видалення файлу з папки tmp
   // await fs.unlink(req.file.path); 
 
-  //for gravatar... create img-avatar from email user
+  //variable for gravatar... create img-avatar from email user
   ////========================
   const avatarURL = gravatar.url(email, {s:'250',});
  
