@@ -5,6 +5,7 @@ import path from "path";
 //import cloudinary from "../helpers/cloudinary.js";
 import gravatar from "gravatar";
 import Jimp from "jimp";
+import { nanoid } from "nanoid";
 
 import User from "../models/User.js";
 import HttpError from '../helpers/HttpError.js';
@@ -57,13 +58,26 @@ const signUp = async (req, res) => {
   const avatarURL = gravatar.url(email, {s:'250',});
  
   // save User (hash password(10 symbols) + add all fields in MongoDB)
-  const hashPassword = await bcrypt.hash(password, 10)
+  const hashPassword = await bcrypt.hash(password, 10);
+  const verificationCode = nanoid();
+
   const newUser = await User.create({
     ...req.body, 
     password: hashPassword, 
     avatarURL,
+    verificationToken: verificationCode,
   });
   
+  const verifyEmail = {
+    to: email,
+    subject: "Verify email",
+    html: `<a 
+      target="_blank" 
+      href="http://localhost:3000/api/auth/verify/${verificationCode}">
+      Click verify email
+      </a>`,
+  }
+
   res.status(201).json({
     username: newUser.username,
     email: newUser.email,
