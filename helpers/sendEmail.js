@@ -22,14 +22,9 @@ const sendEmail = async (data) => {
   const transport = nodemailer.createTransport(nodemailerConfig);
 
   const email = {...data, from: UKR_NET_EMAIL};
-  try {
-    await transport.sendMail(email);
-    return console.log("Email send sucess");
-  } catch (error) {
-    return console.log(error.message);
-  }
+  await transport.sendMail(email);
+  
+  return console.log("Email send sucess");
 }
 
-
-
-  export default sendEmail;
+export default sendEmail;

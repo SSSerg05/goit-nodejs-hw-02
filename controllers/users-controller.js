@@ -9,6 +9,7 @@ import { nanoid } from "nanoid";
 
 import User from "../models/User.js";
 import HttpError from '../helpers/HttpError.js';
+import sendEmail from "../helpers/sendEmail.js";
 import { ctrlWrapper } from '../decorators/index.js';
 import { error, log } from "console";
 
@@ -77,6 +78,7 @@ const signUp = async (req, res) => {
       Click verify email
       </a>`,
   }
+  await sendEmail(verifyEmail);
 
   res.status(201).json({
     username: newUser.username,
