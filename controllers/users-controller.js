@@ -164,7 +164,7 @@ const updateAvatar = async (req, res) => {
 
     // зміна якості+розміру картинки
     Jimp.read(oldPath, async (err, img) => {
-      await img.resize(256, 256) // resize
+      await img.resize(250, 250) // resize
         .quality(60) // set JPEG quality
         .greyscale() // set greyscale
         .writeAsync(newPath); // save файл з папки ../tmp до ../public/avatars
