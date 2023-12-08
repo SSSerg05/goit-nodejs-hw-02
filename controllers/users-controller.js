@@ -153,31 +153,25 @@ const updateAvatar = async (req, res) => {
   try {
     await fs.unlink(deletedPath); 
   } catch (error) {
-    console.log(error);
+    console.log(`${error} Cannot find deleted file ${deletedPath}`);
   }
 
   // картинка аватару у папці ../tmp
   const {path: oldPath, filename } = req.file;
   try {
+    // визначаємо новий повний шлях до файлу ../public/avatars
+    const newPath = path.join(avatarsPath, filename);
 
     // зміна якості+розміру картинки
-    // console.log(oldPath);
     Jimp.read(oldPath, async (err, img) => {
-      // if (error) {
-      //   return console.log(`Not found avatar file ${oldPath}`);
-      // }
-
       await img.resize(256, 256) // resize
         .quality(60) // set JPEG quality
         .greyscale() // set greyscale
-        .writeAsync(oldPath); // save
+        .writeAsync(newPath); // save файл з папки ../tmp до ../public/avatars
     });
 
-    // визначаємо новий повний шлях до файлу ../public/avatars
-    const newPath = path.join(avatarsPath, filename);
-    
     // переміщення файлу з папки ../tmp до ../public/avatars
-    await fs.rename(oldPath, newPath);
+    //await fs.rename(oldPath, newPath);
         
     // формування нового відносного шляху до файла
     const avatarImage = path.join("avatars", filename);
@@ -187,7 +181,8 @@ const updateAvatar = async (req, res) => {
     if (!result) {
       throw HttpError(404, `Not found user with id:${_id}`);
     }
-    
+  
+    await fs.unlink(oldPath);
     res.status(200).json(
       avatarImage,
     );
@@ -195,7 +190,7 @@ const updateAvatar = async (req, res) => {
       await fs.unlink(oldPath);
       throw HttpError(404, `Cannot add avatar file in folder`);
   }
-
+  
 }
 
 
