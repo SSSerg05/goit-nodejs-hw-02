@@ -11,7 +11,8 @@ const nodemailerConfig = {
   auth: {
     user: UKR_NET_EMAIL,
     pass: UKR_NET_PASSWORD,
-  }
+  },
+  tls: { rejectUnauthorized: false },
 }
 
 const transport = nodemailer.createTransport(nodemailerConfig);
