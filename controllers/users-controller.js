@@ -76,7 +76,7 @@ const signUp = async (req, res) => {
     subject: "Verify email",
     html: `<a 
       target="_blank" 
-      href="${BASE_URL}/api/auth/verify/${verificationCode}">
+      href="${BASE_URL}/users/verify/${verificationCode}">
       Click verify email
       </a>`,
   }
@@ -94,12 +94,18 @@ const signUp = async (req, res) => {
 //------------------------
 const verify = async (req, res) => {
   const {verificationToken} = req.params;
-  const user = await User.findOne({verificationToken});
+  
+  const user = await User.findOne({verificationToken}); 
   if (!user) {
     throw HttpError(401,'User not verify');
   }
 
-  await User.findByIdAndUpdate(req.user._id, { verify: true, verificationToken: null });
+  if (user.verify) {
+    throw HttpError(400, "Verification has already been passed");
+  }
+
+  const result = await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: " " });
+
   res.json({
     message: "Email verify success"
   })
@@ -109,17 +115,18 @@ const verify = async (req, res) => {
 //------------------------
 const resendVerify = async (req, res) => {
 
-  const {email, verificationToken} = req.user;
+  const {email} = req.body;
   if(!email) {
     throw HttpError(400, "missing required field email")
   }
 
-  const user = await findOne({email});
+  const user = await User.findOne({email});
   if (!user) {
     throw HttpError(401, "Email not found");
   }
 
-  if (user.verify) {
+  const {verify, verificationToken} = user;
+  if (verify) {
     throw HttpError(400, "Verification has already been passed");
   }
 
@@ -128,7 +135,7 @@ const resendVerify = async (req, res) => {
     subject: "Verify email",
     html: `<a 
       target="_blank" 
-      href="${BASE_URL}/api/auth/verify/${verificationToken}">
+      href="${BASE_URL}/users/verify/${verificationToken}">
       Click verify email
       </a>`,
   }
@@ -148,6 +155,11 @@ const signIn = async (req, res) => {
   const user = await User.findOne({email});
   if (!user) {
     throw HttpError(401, "User not found");
+  }
+
+  const {verify} = user;
+  if (!verify) {
+    throw HttpError(401,'User not verify');
   }
   
   const passwordCompare = await bcrypt.compare(password, user.password);

@@ -3,7 +3,12 @@ import express from 'express';
 import usersController from "../../controllers/users-controller.js";
 import { validateBody } from '../../decorators/index.js'; 
 import { authenticate, isEmptyBody, upload } from '../../middlewares/index.js';
-import { userSignUpSchema, userSignInSchema, userUpdateSubscriptionSchema, userUpdateAvatarSchema, userEmailSchema } from "../../models/User.js";
+import { 
+  userSignUpSchema, 
+  userSignInSchema, 
+  userUpdateSubscriptionSchema, 
+  userUpdateAvatarSchema, 
+  userEmailSchema } from "../../models/User.js";
 
 const usersRoute = express.Router();
 
@@ -11,7 +16,7 @@ usersRoute.post("/register", upload.single("avatarURL"), isEmptyBody, validateBo
 
 usersRoute.get("/verify/:verificationToken", usersController.verify);
 
-usersRoute.post("/verify:", isEmptyBody, validateBody(userEmailSchema), usersController.resendVerify);
+usersRoute.post("/verify", isEmptyBody, validateBody(userEmailSchema), usersController.resendVerify);
 
 usersRoute.post("/login", isEmptyBody, validateBody(userSignInSchema), usersController.signIn);
 
