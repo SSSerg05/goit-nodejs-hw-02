@@ -3,7 +3,7 @@ import express from 'express';
 import usersController from "../../controllers/users-controller.js";
 import { validateBody } from '../../decorators/index.js'; 
 import { authenticate, isEmptyBody, upload } from '../../middlewares/index.js';
-import { userSignUpSchema, userSignInSchema, userUpdateSubscriptionSchema, userUpdateAvatarSchema } from "../../models/User.js";
+import { userSignUpSchema, userSignInSchema, userUpdateSubscriptionSchema, userUpdateAvatarSchema, userEmailSchema } from "../../models/User.js";
 
 const usersRoute = express.Router();
 

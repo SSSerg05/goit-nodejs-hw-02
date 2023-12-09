@@ -76,7 +76,7 @@ export const userUpdateAvatarSchema = Joi.object({
   avatarURL: Joi.string(),
 })
 
-export const userEmailSchema = Jpi.object({
+export const userEmailSchema = Joi.object({
   email: Joi.string().pattern(mailRegExp).required(),
 })
 
