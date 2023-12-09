@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import "dotenv/config";
 
-import HttpError from "./HttpError";
+import HttpError from "./HttpError.js";
 
 const {UKR_NET_PASSWORD, UKR_NET_EMAIL, UKR_NET_SMTP_ADDRESS} = process.env;
 const nodemailerConfig = {
