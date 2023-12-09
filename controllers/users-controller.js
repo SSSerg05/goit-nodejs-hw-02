@@ -12,6 +12,7 @@ import HttpError from '../helpers/HttpError.js';
 import sendEmail from "../helpers/sendEmail.js";
 import { ctrlWrapper } from '../decorators/index.js';
 import { error, log } from "console";
+import { verify } from "crypto";
 
 
 const {JWT_SECRET} = process.env;
@@ -87,6 +88,21 @@ const signUp = async (req, res) => {
     avatarURL: newUser.avatarURL,
   })
 }
+
+const verify = async (req, res) => {
+  const {verificationToken} = req.params;
+  const user = await User.findOne({verificationToken});
+  if (!user) {
+    throw HttpError(401,'User not verify');
+  }
+
+  await User.findByIdAndUpdate(req.user._id, { verify: true, verificationToken: "" });
+  res.json({
+    message: "Email verify sucess"
+  })
+}
+
+
 
 // авторизований вхід 
 //------------------------
@@ -212,6 +228,7 @@ const updateAvatar = async (req, res) => {
 
 export default {
   signUp: ctrlWrapper(signUp),
+  verify: ctrlWrapper(verify),
   signIn: ctrlWrapper(signIn),
   getCurrent: ctrlWrapper(getCurrent),
   signOut: ctrlWrapper(signOut),
