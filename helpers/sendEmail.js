@@ -1,9 +1,11 @@
 import nodemailer from "nodemailer";
 import "dotenv/config";
 
-const {UKR_NET_PASSWORD, UKR_NET_EMAIL} = process.env;
+import HttpError from "./HttpError";
+
+const {UKR_NET_PASSWORD, UKR_NET_EMAIL, UKR_NET_SMTP_ADDRESS} = process.env;
 const nodemailerConfig = {
-  host: "smtp.ukr.net",
+  host: UKR_NET_SMTP_ADDRESS,
   port: 465,
   secure: true,
   auth: {
@@ -16,11 +18,13 @@ const transport = nodemailer.createTransport(nodemailerConfig);
 
 const sendEmail = async (data) => {
   const email = {...data, from: UKR_NET_EMAIL};
-  console.log(email);
 
   await transport.sendMail(email)
     .then(() => console.log(`Email to=${data.to} send sucess`))
-    .catch(error => console.log(`Wrong send email. ${error.message}`));
+    .catch(error => {
+      console.log(`Wrong send email. ${error.message}`)
+      throw HttpError(404, "Wrong send email")
+    });
 }
 
 export default sendEmail;
