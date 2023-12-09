@@ -108,15 +108,19 @@ const verify = async (req, res) => {
 // повторне відправлення листа веріфікації
 //------------------------
 const resendVerify = async (req, res) => {
+
   const {email, verificationToken} = req.user;
-  
+  if(!email) {
+    throw HttpError(400, "missing required field email")
+  }
+
   const user = await findOne({email});
   if (!user) {
     throw HttpError(401, "Email not found");
   }
 
   if (user.verify) {
-    throw HttpError(404, "Email already verify");
+    throw HttpError(400, "Verification has already been passed");
   }
 
   const verifyEmail = {
@@ -131,7 +135,8 @@ const resendVerify = async (req, res) => {
   
   await sendEmail(verifyEmail);
   res.json({
-    message: "Email resend success"
+    message: `${email} - email resend success`,
+    email: email,
   })
 }
 
