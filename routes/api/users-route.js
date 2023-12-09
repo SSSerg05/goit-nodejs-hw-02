@@ -9,6 +9,10 @@ const usersRoute = express.Router();
 
 usersRoute.post("/register", upload.single("avatarURL"), isEmptyBody, validateBody(userSignUpSchema), usersController.signUp);
 
+usersRoute.get("/verify/:verificationToken", usersController.verify);
+
+usersRoute.post("/verify:", isEmptyBody, validateBody(userEmailSchema), usersController.resendVerify);
+
 usersRoute.post("/login", isEmptyBody, validateBody(userSignInSchema), usersController.signIn);
 
 usersRoute.get("/current", authenticate, usersController.getCurrent);

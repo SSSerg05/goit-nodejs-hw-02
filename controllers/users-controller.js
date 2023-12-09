@@ -6,17 +6,18 @@ import path from "path";
 import gravatar from "gravatar";
 import Jimp from "jimp";
 import { nanoid } from "nanoid";
+import "dotenv/config";
 
 import User from "../models/User.js";
 import HttpError from '../helpers/HttpError.js';
 import sendEmail from "../helpers/sendEmail.js";
 import { ctrlWrapper } from '../decorators/index.js';
 import { error, log } from "console";
-import { verify } from "crypto";
 
 
-const {JWT_SECRET} = process.env;
+const {JWT_SECRET, BASE_URL} = process.env;
 const avatarsPath = path.resolve("public", "avatars");
+
 
 // Реєстрація користувача
 //------------------------
@@ -75,7 +76,7 @@ const signUp = async (req, res) => {
     subject: "Verify email",
     html: `<a 
       target="_blank" 
-      href="http://localhost:3000/api/auth/verify/${verificationCode}">
+      href="${BASE_URL}/api/auth/verify/${verificationCode}">
       Click verify email
       </a>`,
   }
@@ -89,6 +90,8 @@ const signUp = async (req, res) => {
   })
 }
 
+// підтвердження що користувач підтвердив верефікацію з надіслоного йому листа
+//------------------------
 const verify = async (req, res) => {
   const {verificationToken} = req.params;
   const user = await User.findOne({verificationToken});
@@ -96,18 +99,47 @@ const verify = async (req, res) => {
     throw HttpError(401,'User not verify');
   }
 
-  await User.findByIdAndUpdate(req.user._id, { verify: true, verificationToken: "" });
+  await User.findByIdAndUpdate(req.user._id, { verify: true, verificationToken: null });
   res.json({
-    message: "Email verify sucess"
+    message: "Email verify success"
   })
 }
 
+// повторне відправлення листа веріфікації
+//------------------------
+const resendVerify = async (req, res) => {
+  const {email, verificationToken} = req.user;
+  
+  const user = await findOne({email});
+  if (!user) {
+    throw HttpError(401, "Email not found");
+  }
 
+  if (user.verify) {
+    throw HttpError(404, "Email already verify");
+  }
+
+  const verifyEmail = {
+    to: email,
+    subject: "Verify email",
+    html: `<a 
+      target="_blank" 
+      href="${BASE_URL}/api/auth/verify/${verificationToken}">
+      Click verify email
+      </a>`,
+  }
+  
+  await sendEmail(verifyEmail);
+  res.json({
+    message: "Email resend success"
+  })
+}
 
 // авторизований вхід 
 //------------------------
 const signIn = async (req, res) => {
   const {email, password} = req.body;
+
   const user = await User.findOne({email});
   if (!user) {
     throw HttpError(401, "User not found");
@@ -120,6 +152,9 @@ const signIn = async (req, res) => {
 
   const payload = {
     id: user.id,
+  }
+  if (!user.verify) {
+    throw HttpError(404, "User not found or not verithication");
   }
 
   const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "23h"});
@@ -134,7 +169,7 @@ const signIn = async (req, res) => {
 // отримання даних про поточного користувача
 //------------------------
 const getCurrent =  async (req, res) => {
-  const {_id, username, email, subscription, token} = req.user;
+  const {_id, email, subscription} = req.user;
   if (!_id) {
     throw HttpError(401, "User not authorized");
   }
@@ -229,6 +264,7 @@ const updateAvatar = async (req, res) => {
 export default {
   signUp: ctrlWrapper(signUp),
   verify: ctrlWrapper(verify),
+  resendVerify: ctrlWrapper(resendVerify),
   signIn: ctrlWrapper(signIn),
   getCurrent: ctrlWrapper(getCurrent),
   signOut: ctrlWrapper(signOut),
