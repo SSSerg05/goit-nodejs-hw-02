@@ -49,7 +49,8 @@ const userShema = new Schema({
 // hooks mongoose
 userShema.post("save", handleSaveError);
 
-userShema.pre("findOneAndUpdate", preUpdate);
+//userShema.pre("findOneAndUpdate", preUpdate);
+userShema.pre("updateOne", preUpdate);
 userShema.post("findOneAndUpdate", handleSaveError);
 
 // Sign-Up
@@ -69,6 +70,7 @@ export const userSignInSchema = Joi.object({
 })
 
 export const userUpdateSubscriptionSchema = Joi.object({
+  // username: Joi.string(),
   subscription: Joi.string().valid(...subscriptionList).required(),
 })
 
