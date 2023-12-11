@@ -19,6 +19,7 @@ const avatarsPath = path.resolve("public", "avatars");
 
 
 // Реєстрація користувача
+// usersRoute.post("/register");
 //------------------------
 const signUp = async (req, res) => {
 
@@ -43,6 +44,7 @@ const signUp = async (req, res) => {
     verificationToken,
   });
   
+  // створення та відправка листа
   await sendEmail(verifyEmail({email, verificationToken}))
 
   res.status(201).json({
@@ -54,6 +56,7 @@ const signUp = async (req, res) => {
 }
 
 // підтвердження що користувач підтвердив верефікацію з надіслоного йому листа
+// usersRoute.get("/verify/:verificationToken");
 //------------------------
 const verify = async (req, res) => {
   const {verificationToken} = req.params;
@@ -75,6 +78,7 @@ const verify = async (req, res) => {
 }
 
 // повторне відправлення листа веріфікації
+// usersRoute.post("/verify");
 //------------------------
 const resendVerify = async (req, res) => {
 
@@ -93,6 +97,7 @@ const resendVerify = async (req, res) => {
     throw HttpError(400, "Verification has already been passed");
   }
 
+  // створення та відправка листа
   await sendEmail(verifyEmail({email, verificationToken}));
   res.json({
     message: `${email} - email resend success`,
@@ -101,6 +106,7 @@ const resendVerify = async (req, res) => {
 }
 
 // авторизований вхід 
+// usersRoute.post("/login");
 //------------------------
 const signIn = async (req, res) => {
   const {email, password} = req.body;
@@ -137,6 +143,7 @@ const signIn = async (req, res) => {
 
 
 // отримання даних про поточного користувача
+// usersRoute.get("/current");
 //------------------------
 const getCurrent =  async (req, res) => {
   const {_id, email, subscription} = req.user;
@@ -150,6 +157,7 @@ const getCurrent =  async (req, res) => {
 }
 
 // вихід з облікового запису
+// usersRoute.post("/logout");
 //------------------------
 const signOut = async (req, res) => {
   const {_id} = req.user;
@@ -162,6 +170,9 @@ const signOut = async (req, res) => {
   res.status(204);
 }
 
+// Коригування у запису користувача поля Subscription
+// usersRoute.patch('/');
+//------------------------
 const update = async (req, res) => {
   const {_id} = req.user;
   if (!_id) {
@@ -176,7 +187,9 @@ const update = async (req, res) => {
   res.json(result);
 }
 
-
+// Коригування у запису користувача картинки Аватара
+// usersRoute.patch('/avatars');
+//------------------------
 const updateAvatar = async (req, res) => {
 
   const {_id, avatarURL} = req.user;
