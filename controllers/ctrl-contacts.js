@@ -12,7 +12,7 @@ const listContacts = async (req, res) => {
   const {_id: owner, username} = req.user;
 
   //пагінація
-  const {page=1, limit=10, favorite, ...filterParams} = req.query; 
+  const {page=1, limit=10, ...filterParams} = req.query; 
   // console.log(page, limit, favorite);
 
   const skip = (page - 1) * limit;
@@ -23,7 +23,7 @@ const listContacts = async (req, res) => {
   const result = await Contact.find(
     filter,
    "-createdAt -updatedAt",
-    {skip, limit, favorite}
+    {skip, limit, ...filterParams}
   ).populate("owner","username email");
 
 //  const result = await Contact.find({},"-email"); // all fields without email
@@ -57,7 +57,6 @@ const getContactById = async (req, res) => {
 const addContact = async (req, res) => {
 
   const {_id: owner} = req.user;
-  console.log(req.user);
   const result = await Contact.create({...req.body, owner});
   // console.log(result, req.body);
 
