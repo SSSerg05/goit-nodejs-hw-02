@@ -1,13 +1,15 @@
 import fs from "fs/promises";
 import path from "path";
 import "dotenv/config";
+import gravatar from "gravatar";
+import Jimp from "jimp";
+import { nanoid } from "nanoid";
 
 import HttpError from "../helpers/HttpError";
 import User from "../models/User";
 import cloudinary from "../helpers/cloudinary.js";
-import gravatar from "gravatar";
-import Jimp from "jimp";
-import { nanoid } from "nanoid";
+import sendEmail from "../helpers/sendEmail.js";
+import { ctrlWrapper } from '../decorators/index.js';
 
 
 const {JWT_SECRET, BASE_URL} = process.env;

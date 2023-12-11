@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import fs from "fs/promises";
 import path from "path";
-//import cloudinary from "../helpers/cloudinary.js";
 import gravatar from "gravatar";
 import Jimp from "jimp";
 import { nanoid } from "nanoid";
