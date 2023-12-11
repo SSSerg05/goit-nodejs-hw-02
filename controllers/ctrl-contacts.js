@@ -9,11 +9,12 @@ import { ctrlWrapper } from '../decorators/index.js';
 const listContacts = async (req, res) => {
   
   // отримати всі дані авторизованого користувача
-  const {_id: owner} = req.user;
+  const {_id: owner, username} = req.user;
 
   //пагінація
-  const {page=1, limit=10, ...filterParams} = req.query; 
+  const {page=1, limit=10, favorite, ...filterParams} = req.query; 
   // console.log(page, limit, favorite);
+
   const skip = (page - 1) * limit;
 
   // filter
@@ -27,8 +28,12 @@ const listContacts = async (req, res) => {
 
 //  const result = await Contact.find({},"-email"); // all fields without email
 //  const result = await Contact.find({}, 'name phone'); // all fields with name and phone
+  // if (!result.length) {
+  //   throw HttpError(400, `DataBase for user ${username} - Empty`); 
+  // }
+
   if (!result) {
-    throw HttpError(500, "Server not found");
+    throw HttpError(500, "Server not found"); // DataBase Empty
   }
 
   res.json(result);
@@ -52,6 +57,7 @@ const getContactById = async (req, res) => {
 const addContact = async (req, res) => {
 
   const {_id: owner} = req.user;
+  console.log(req.user);
   const result = await Contact.create({...req.body, owner});
   // console.log(result, req.body);
 
