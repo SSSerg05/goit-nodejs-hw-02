@@ -99,6 +99,7 @@ const resendVerify = async (req, res) => {
 
   // створення та відправка листа
   await sendEmail(verifyEmail({email, verificationToken}));
+
   res.json({
     message: `${email} - email resend success`,
     email: email,

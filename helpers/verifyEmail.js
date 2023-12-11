@@ -12,6 +12,7 @@ const verifyEmail = ({email, verificationToken}) => {
       Click verify email
       </a>`,
   }
+
   return emailData;
 }
 
