@@ -11,11 +11,11 @@ import "dotenv/config";
 import User from "../models/User.js";
 import HttpError from '../helpers/HttpError.js';
 import sendEmail from "../helpers/sendEmail.js";
+import verifyEmail from "../helpers/verifyEmail.js";
 import { ctrlWrapper } from '../decorators/index.js';
-import { error, log } from "console";
 
 
-const {JWT_SECRET, BASE_URL} = process.env;
+const {JWT_SECRET} = process.env;
 const avatarsPath = path.resolve("public", "avatars");
 
 
@@ -29,58 +29,22 @@ const signUp = async (req, res) => {
     throw HttpError(409, "Email in use");
   }
 
-  // variable for upload + save path for file img avatars
-  ////========================
-  // const {path: oldPath, filename } = req.file;
-  // const newPath = path.join(avatarsPath, filename);
-  
-  // переміщення файлу з папки ../tmp до ../public/avatars
-  // await fs.rename(oldPath, newPath);
-
-  // формування нового відносного шляху до файла
-  //  const avatarURL = path.join("avatars", filename);
-
-
-  ////variable for cloudinary...
-  ////========================
-  // завантажуємо файл до сховища cloudinary
-  ////const fileData = await cloudinary.uploader.upload(
-  ////  <шлях_до_файлу_який_хочемо_завантажити>,
-  ////  { <назва_папки_куди_завантажуємо_файл>, },
-  ////)
-  // const { url: avatarURL } = await cloudinary.uploader.upload(
-  //   req.file.path, 
-  //   { folder: "avatars", }
-  // );
-  //
-  // видалення файлу з папки tmp
-  // await fs.unlink(req.file.path); 
-
   //variable for gravatar... create img-avatar from email user
   ////========================
   const avatarURL = gravatar.url(email, {s:'250',});
  
   // save User (hash password(10 symbols) + add all fields in MongoDB)
   const hashPassword = await bcrypt.hash(password, 10);
-  const verificationCode = nanoid();
+  const verificationToken = nanoid();
 
   const newUser = await User.create({
     ...req.body, 
     password: hashPassword, 
     avatarURL,
-    verificationToken: verificationCode,
+    verificationToken,
   });
   
-  const verifyEmail = {
-    to: email,
-    subject: "Verify email",
-    html: `<a 
-      target="_blank" 
-      href="${BASE_URL}/users/verify/${verificationCode}">
-      Click verify email
-      </a>`,
-  }
-  await sendEmail(verifyEmail);
+  await sendEmail(verifyEmail({email, verificationToken}))
 
   res.status(201).json({
     username: newUser.username,
@@ -104,7 +68,7 @@ const verify = async (req, res) => {
     throw HttpError(400, "Verification has already been passed");
   }
 
-  const result = await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: null });
+  await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: null });
 
   res.json({
     message: "Email verify success"
@@ -130,17 +94,7 @@ const resendVerify = async (req, res) => {
     throw HttpError(400, "Verification has already been passed");
   }
 
-  const verifyEmail = {
-    to: email,
-    subject: "Verify email",
-    html: `<a 
-      target="_blank" 
-      href="${BASE_URL}/users/verify/${verificationToken}">
-      Click verify email
-      </a>`,
-  }
-  
-  await sendEmail(verifyEmail);
+  await sendEmail(verifyEmail({email, verificationToken}));
   res.json({
     message: `${email} - email resend success`,
     email: email,
