@@ -2,20 +2,24 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import fs from "fs/promises";
 import path from "path";
-//import cloudinary from "../helpers/cloudinary.js";
 import gravatar from "gravatar";
 import Jimp from "jimp";
+import { nanoid } from "nanoid";
+import "dotenv/config";
 
 import User from "../models/User.js";
 import HttpError from '../helpers/HttpError.js';
+import sendEmail from "../helpers/sendEmail.js";
+import verifyEmail from "../helpers/verifyEmail.js";
 import { ctrlWrapper } from '../decorators/index.js';
-import { error, log } from "console";
 
 
 const {JWT_SECRET} = process.env;
 const avatarsPath = path.resolve("public", "avatars");
 
+
 // Реєстрація користувача
+// usersRoute.post("/register");
 //------------------------
 const signUp = async (req, res) => {
 
@@ -25,45 +29,24 @@ const signUp = async (req, res) => {
     throw HttpError(409, "Email in use");
   }
 
-  // variable for upload + save path for file img avatars
-  ////========================
-  // const {path: oldPath, filename } = req.file;
-  // const newPath = path.join(avatarsPath, filename);
-  
-  // переміщення файлу з папки ../tmp до ../public/avatars
-  // await fs.rename(oldPath, newPath);
-
-  // формування нового відносного шляху до файла
-  //  const avatarURL = path.join("avatars", filename);
-
-
-  ////variable for cloudinary...
-  ////========================
-  // завантажуємо файл до сховища cloudinary
-  ////const fileData = await cloudinary.uploader.upload(
-  ////  <шлях_до_файлу_який_хочемо_завантажити>,
-  ////  { <назва_папки_куди_завантажуємо_файл>, },
-  ////)
-  // const { url: avatarURL } = await cloudinary.uploader.upload(
-  //   req.file.path, 
-  //   { folder: "avatars", }
-  // );
-  //
-  // видалення файлу з папки tmp
-  // await fs.unlink(req.file.path); 
-
   //variable for gravatar... create img-avatar from email user
   ////========================
   const avatarURL = gravatar.url(email, {s:'250',});
  
   // save User (hash password(10 symbols) + add all fields in MongoDB)
-  const hashPassword = await bcrypt.hash(password, 10)
+  const hashPassword = await bcrypt.hash(password, 10);
+  const verificationToken = nanoid();
+
   const newUser = await User.create({
     ...req.body, 
     password: hashPassword, 
     avatarURL,
+    verificationToken,
   });
   
+  // створення та відправка листа
+  await sendEmail(verifyEmail({email, verificationToken}))
+
   res.status(201).json({
     username: newUser.username,
     email: newUser.email,
@@ -72,13 +55,71 @@ const signUp = async (req, res) => {
   })
 }
 
+// підтвердження що користувач підтвердив верефікацію з надіслоного йому листа
+// usersRoute.get("/verify/:verificationToken");
+//------------------------
+const verify = async (req, res) => {
+  const {verificationToken} = req.params;
+  
+  const user = await User.findOne({verificationToken}); 
+  if (!user) {
+    throw HttpError(401,'User not found or not verify');
+  }
+
+  if (user.verify) {
+    throw HttpError(400, "Verification has already been passed");
+  }
+
+  await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: null });
+
+  res.json({
+    message: "Email verify success"
+  })
+}
+
+// повторне відправлення листа веріфікації
+// usersRoute.post("/verify");
+//------------------------
+const resendVerify = async (req, res) => {
+
+  const {email} = req.body;
+  if(!email) {
+    throw HttpError(400, "missing required field email")
+  }
+
+  const user = await User.findOne({email});
+  if (!user) {
+    throw HttpError(401, "Email not found");
+  }
+
+  const {verify, verificationToken} = user;
+  if (verify) {
+    throw HttpError(400, "Verification has already been passed");
+  }
+
+  // створення та відправка листа
+  await sendEmail(verifyEmail({email, verificationToken}));
+
+  res.json({
+    message: `${email} - email resend success`,
+    email: email,
+  })
+}
+
 // авторизований вхід 
+// usersRoute.post("/login");
 //------------------------
 const signIn = async (req, res) => {
   const {email, password} = req.body;
+
   const user = await User.findOne({email});
   if (!user) {
     throw HttpError(401, "User not found");
+  }
+
+  const {verify} = user;
+  if (!verify) {
+    throw HttpError(401,'User not verify');
   }
   
   const passwordCompare = await bcrypt.compare(password, user.password);
@@ -88,6 +129,9 @@ const signIn = async (req, res) => {
 
   const payload = {
     id: user.id,
+  }
+  if (!user.verify) {
+    throw HttpError(404, "User not found or not verithication");
   }
 
   const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "23h"});
@@ -100,9 +144,10 @@ const signIn = async (req, res) => {
 
 
 // отримання даних про поточного користувача
+// usersRoute.get("/current");
 //------------------------
 const getCurrent =  async (req, res) => {
-  const {_id, username, email, subscription, token} = req.user;
+  const {_id, email, subscription} = req.user;
   if (!_id) {
     throw HttpError(401, "User not authorized");
   }
@@ -113,6 +158,7 @@ const getCurrent =  async (req, res) => {
 }
 
 // вихід з облікового запису
+// usersRoute.post("/logout");
 //------------------------
 const signOut = async (req, res) => {
   const {_id} = req.user;
@@ -125,6 +171,9 @@ const signOut = async (req, res) => {
   res.status(204);
 }
 
+// Коригування у запису користувача поля Subscription
+// usersRoute.patch('/');
+//------------------------
 const update = async (req, res) => {
   const {_id} = req.user;
   if (!_id) {
@@ -139,7 +188,9 @@ const update = async (req, res) => {
   res.json(result);
 }
 
-
+// Коригування у запису користувача картинки Аватара
+// usersRoute.patch('/avatars');
+//------------------------
 const updateAvatar = async (req, res) => {
 
   const {_id, avatarURL} = req.user;
@@ -196,6 +247,8 @@ const updateAvatar = async (req, res) => {
 
 export default {
   signUp: ctrlWrapper(signUp),
+  verify: ctrlWrapper(verify),
+  resendVerify: ctrlWrapper(resendVerify),
   signIn: ctrlWrapper(signIn),
   getCurrent: ctrlWrapper(getCurrent),
   signOut: ctrlWrapper(signOut),

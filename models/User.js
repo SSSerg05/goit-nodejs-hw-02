@@ -33,7 +33,15 @@ const userShema = new Schema({
   avatarURL: {
     type: String,
     default: null,  
-  }
+  },
+  verify: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
+    type: String,
+    required: [true, 'Verify token is required'],
+  },
 }, {versionKey: false, timestamps: true});
 
 
@@ -41,7 +49,8 @@ const userShema = new Schema({
 // hooks mongoose
 userShema.post("save", handleSaveError);
 
-userShema.pre("findOneAndUpdate", preUpdate);
+//userShema.pre("findOneAndUpdate", preUpdate);
+userShema.pre("updateOne", preUpdate);
 userShema.post("findOneAndUpdate", handleSaveError);
 
 // Sign-Up
@@ -61,11 +70,16 @@ export const userSignInSchema = Joi.object({
 })
 
 export const userUpdateSubscriptionSchema = Joi.object({
+  // username: Joi.string(),
   subscription: Joi.string().valid(...subscriptionList).required(),
 })
 
 export const userUpdateAvatarSchema = Joi.object({
   avatarURL: Joi.string(),
+})
+
+export const userEmailSchema = Joi.object({
+  email: Joi.string().pattern(mailRegExp).required(),
 })
 
 const User = model('user', userShema);
